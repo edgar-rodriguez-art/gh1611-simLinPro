@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generado": "2026-11-14T03:55:31.469Z",
+  "generado": "2026-11-14T12:10:49.272Z",
   "fuente": "eurostat",
   "sectors": {
     "bakery": {
@@ -26,14 +26,14 @@
       "fecha": "2026-11-14"
     },
     "electronics": {
-      "index": 150.5,
-      "sigma": 0.2812,
+      "index": 141.6,
+      "sigma": 0.0479,
       "period": "2026-09",
       "n": 24,
       "fuente": "eurostat",
       "dataset": "sts_inpr_m",
       "nace": "C26",
-      "s_adj": "CA",
+      "s_adj": "SCA",
       "fecha": "2026-11-14"
     }
   },
