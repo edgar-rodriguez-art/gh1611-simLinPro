@@ -37,7 +37,7 @@ function fixtureFetch(dir) {
 
 async function main() {
   const fetchFn = fixtures ? fixtureFetch(fixtures) : fetch;
-  let cache = null;
+  let cache;
   try {
     cache = JSON.parse(await readFile(out, 'utf8'));
   } catch {
