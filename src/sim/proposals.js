@@ -1,6 +1,6 @@
 // @ts-check
 // Orquestación de Monte Carlo (§7): cribado de candidatos, top 3, combinaciones y presupuesto de 3 s.
-import { buildCandidates, combine, mergeResults, compare, histogram, describe, runScenarios } from './montecarlo.js';
+import { buildCandidates, combine, mergeResults, compare, histogram2, describe, runScenarios } from './montecarlo.js';
 import { MC_BUDGET_MS, MC_DEFAULT_N, MC_HORIZON_DAYS, parseSlot } from '../config.js';
 
 const SCREEN_N = 30;
@@ -125,8 +125,7 @@ export async function analyzeSlot(o) {
     baseline: describe(base2.profit),
     baseK: { k1: describe(base2.k1), k2: describe(base2.k2) },
     ranking,
-    histBase: histogram(base2.profit, 24),
-    histBest: best ? histogram(s2.results[best.id].profit, 24) : null,
+    hist: histogram2(base2.profit, best ? s2.results[best.id].profit : [], 24),
     bestId: best ? best.id : null,
   };
 }

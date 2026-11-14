@@ -1,10 +1,23 @@
 import { defineConfig } from 'vite';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdirSync, copyFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
+/** Copia data/metrics.json (caché de la Action) al build para que la app la lea en Pages. */
+function copyMetrics() {
+  return {
+    name: 'copy-metrics',
+    apply: 'build',
+    closeBundle() {
+      mkdirSync('dist/data', { recursive: true });
+      copyFileSync('data/metrics.json', 'dist/data/metrics.json');
+    },
+  };
+}
+
 export default defineConfig({
   base: '/gh1611-simLinPro/',
+  plugins: [copyMetrics()],
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __COMMIT_SHA__: JSON.stringify((process.env.VITE_COMMIT_SHA || 'local').slice(0, 40)),

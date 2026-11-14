@@ -175,3 +175,22 @@ export function histogram(values, bins = 20) {
   const edges = Array.from({ length: bins }, (_, i) => lo + w * (i + 0.5));
   return { edges, counts };
 }
+
+/** Histograma de dos distribuciones con las mismas cubetas (para compararlas). */
+export function histogram2(a, b, bins = 24) {
+  const all = [...a, ...b];
+  if (!all.length) return { edges: [], a: [], b: [] };
+  let lo = Infinity;
+  let hi = -Infinity;
+  for (const v of all) {
+    if (v < lo) lo = v;
+    if (v > hi) hi = v;
+  }
+  if (hi === lo) hi = lo + 1;
+  const w = (hi - lo) / bins;
+  const ca = new Array(bins).fill(0);
+  const cb = new Array(bins).fill(0);
+  for (const v of a) ca[Math.min(bins - 1, Math.floor((v - lo) / w))]++;
+  for (const v of b) cb[Math.min(bins - 1, Math.floor((v - lo) / w))]++;
+  return { edges: Array.from({ length: bins }, (_, i) => lo + w * (i + 0.5)), a: ca, b: cb };
+}

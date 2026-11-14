@@ -235,8 +235,9 @@ export function shipToDistributor(engine, p, qty) {
   p.acc.shipped += qty;
   const [a, b, c] = sec.tripHours;
   const travel = engine.rng.triangular(a * 0.5, b * 0.5, c * 0.5);
-  p.outbound.push({ qty, arriveAt: engine.state.t + Math.max(1, Math.round(travel)), price: p.params.price });
-  engine.emit('ship_to_dist', { sector: p.sector, qty });
+  const arriveAt = engine.state.t + Math.max(1, Math.round(travel));
+  p.outbound.push({ qty, arriveAt, price: p.params.price });
+  engine.emit('ship_to_dist', { sector: p.sector, qty, arriveAt });
 }
 
 /** El distribuidor hace un pedido al productor. */

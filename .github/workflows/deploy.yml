@@ -28,11 +28,8 @@ jobs:
       - run: npm run build
         env:
           VITE_COMMIT_SHA: ${{ github.sha }}
-      - name: Copiar datos y 404
-        run: |
-          mkdir -p dist/data
-          cp data/metrics.json dist/data/metrics.json
-          cp dist/index.html dist/404.html
+      - name: Página 404 (enlaces con ?sala=)
+        run: cp dist/index.html dist/404.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
