@@ -1,12 +1,49 @@
 {
   "schema": 1,
-  "generado": "2026-11-14T00:00:00.000Z",
-  "fuente": "por-defecto",
+  "generado": "2026-11-14T03:55:31.469Z",
+  "fuente": "eurostat",
   "sectors": {
-    "bakery": { "index": 100, "sigma": 0.02, "period": null, "fuente": "por-defecto" },
-    "textile": { "index": 100, "sigma": 0.04, "period": null, "fuente": "por-defecto" },
-    "electronics": { "index": 100, "sigma": 0.08, "period": null, "fuente": "por-defecto" }
+    "bakery": {
+      "index": 101.1,
+      "sigma": 0.0057,
+      "period": "2026-09",
+      "n": 24,
+      "fuente": "eurostat",
+      "dataset": "sts_inpr_m",
+      "nace": "C10",
+      "s_adj": "SCA",
+      "fecha": "2026-11-14"
+    },
+    "textile": {
+      "index": 93.4,
+      "sigma": 0.0224,
+      "period": "2026-09",
+      "n": 24,
+      "fuente": "eurostat",
+      "dataset": "sts_inpr_m",
+      "nace": "C13",
+      "s_adj": "SCA",
+      "fecha": "2026-11-14"
+    },
+    "electronics": {
+      "index": 150.5,
+      "sigma": 0.2812,
+      "period": "2026-09",
+      "n": 24,
+      "fuente": "eurostat",
+      "dataset": "sts_inpr_m",
+      "nace": "C26",
+      "s_adj": "CA",
+      "fecha": "2026-11-14"
+    }
   },
-  "hicp": { "rate": 2.5, "period": null, "fuente": "por-defecto" },
+  "hicp": {
+    "rate": 3,
+    "period": "2025-12",
+    "fuente": "eurostat",
+    "dataset": "prc_hicp_manr",
+    "fecha": "2026-11-14",
+    "stale": true
+  },
   "manufacturing": null
 }
