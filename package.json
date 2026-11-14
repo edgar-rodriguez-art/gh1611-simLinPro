@@ -1,0 +1,31 @@
+{
+  "name": "simlinpro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SimLinPro · Simulación low-poly en tiempo real de líneas de producción",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "metrics": "node scripts/fetch-metrics.mjs",
+    "analyze-logs": "node scripts/analyze-logs.mjs"
+  },
+  "dependencies": {
+    "peerjs": "^1.5.5",
+    "qrcode-generator": "^2.0.4",
+    "three": "^0.187.0",
+    "uplot": "^1.6.32"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}
