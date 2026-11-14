@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "generado": "2026-11-14T00:00:00.000Z",
+  "fuente": "por-defecto",
+  "sectors": {
+    "bakery": { "index": 100, "sigma": 0.02, "period": null, "fuente": "por-defecto" },
+    "textile": { "index": 100, "sigma": 0.04, "period": null, "fuente": "por-defecto" },
+    "electronics": { "index": 100, "sigma": 0.08, "period": null, "fuente": "por-defecto" }
+  },
+  "hicp": { "rate": 2.5, "period": null, "fuente": "por-defecto" },
+  "manufacturing": null
+}
