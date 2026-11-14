@@ -15,7 +15,9 @@ const ENUM_LABELS = {
  *          extra?:HTMLElement[]}} o
  */
 export function buildRoleHud(o) {
-  const ps = /** @type {{role:'producer'|'distributor'|'buyer', sector:'bakery'|'textile'|'electronics'}} */ (parseSlot(o.slot));
+  const ps = /** @type {{role:'producer'|'distributor'|'buyer', sector:'bakery'|'textile'|'electronics'}} */ (
+    parseSlot(o.slot)
+  );
   const defs = PARAM_DEFS[ps.role];
   const root = h('div', { class: 'stack' });
   const controller = h('span', { class: 'chip' });
@@ -41,7 +43,12 @@ export function buildRoleHud(o) {
     kpiGrid.append(h('div', { class: 'kpi' }, [h('div', { class: 'label', text: k.label }), value, canvas]));
     tiles[k.key] = { value, canvas, def: k };
   }
-  root.append(h('section', { class: 'section' }, [h('header', {}, [h('h3', { text: 'Mis KPI (último día)' })]), kpiGrid]));
+  root.append(
+    h('section', { class: 'section' }, [
+      h('header', {}, [h('h3', { text: 'Mis KPI (último día)' })]),
+      kpiGrid,
+    ]),
+  );
 
   // Parámetros
   const controls = {};
@@ -73,7 +80,9 @@ export function buildRoleHud(o) {
       });
       seg.append(...btns);
       const hint = key === 'supplier' ? h('div', { class: 'muted tiny' }) : null;
-      params.append(h('div', { class: 'param' }, [h('div', { class: 'top' }, [h('span', { text: d.label })]), seg, hint]));
+      params.append(
+        h('div', { class: 'param' }, [h('div', { class: 'top' }, [h('span', { text: d.label })]), seg, hint]),
+      );
       controls[key] = {
         set: (v) => {
           btns.forEach((x) => x.classList.toggle('on', x.dataset.value === v));
@@ -96,7 +105,12 @@ export function buildRoleHud(o) {
         dragging = false;
         send(key, Number(input.value));
       });
-      params.append(h('div', { class: 'param' }, [h('div', { class: 'top' }, [h('span', { text: d.label }), out]), input]));
+      params.append(
+        h('div', { class: 'param' }, [
+          h('div', { class: 'top' }, [h('span', { text: d.label }), out]),
+          input,
+        ]),
+      );
       controls[key] = {
         set: (v) => {
           if (dragging || document.activeElement === input) return;
@@ -108,7 +122,10 @@ export function buildRoleHud(o) {
   }
   root.append(
     h('section', { class: 'section' }, [
-      h('header', {}, [h('h3', { text: 'Mis parámetros' }), h('span', { class: 'tiny muted', text: 'el anfitrión aplica límites' })]),
+      h('header', {}, [
+        h('h3', { text: 'Mis parámetros' }),
+        h('span', { class: 'tiny muted', text: 'el anfitrión aplica límites' }),
+      ]),
       params,
     ]),
   );
@@ -128,7 +145,9 @@ export function buildRoleHud(o) {
       status.textContent = o.status(data);
       const ctl = data.slots?.[o.slot];
       const human = ctl?.controller === 'human';
-      controller.innerHTML = human ? `${iconSvg('human', 14)} Humano` : `${iconSvg('bot', 14)} ${ctl?.conservative ? 'BOT conservador' : 'BOT'}`;
+      controller.innerHTML = human
+        ? `${iconSvg('human', 14)} Humano`
+        : `${iconSvg('bot', 14)} ${ctl?.conservative ? 'BOT conservador' : 'BOT'}`;
       controller.className = 'chip ' + (human ? 'ok' : 'warn');
       for (const [k, c] of Object.entries(controls)) if (k in ent.params) c.set(ent.params[k]);
       const today = data.kpi?.[o.slot];
@@ -138,7 +157,10 @@ export function buildRoleHud(o) {
       }
       if (hist && hist.length) {
         for (const [k, t] of Object.entries(tiles)) {
-          sparkline(t.canvas, hist.slice(-20).map((d) => d.slots?.[o.slot]?.[k]));
+          sparkline(
+            t.canvas,
+            hist.slice(-20).map((d) => d.slots?.[o.slot]?.[k]),
+          );
         }
       }
     },
@@ -147,8 +169,10 @@ export function buildRoleHud(o) {
 
 function fmtParam(key, v) {
   if (key === 'price') return fmt.eur2(v);
-  if (key === 'maintenance' || key === 'margin' || key.startsWith('basket') || key.endsWith('Pct')) return v + ' %';
-  if (key === 'reorderDays' || key === 's' || key === 'Q' || key === 'safetyDays' || key === 'orderEvery') return v + ' d';
+  if (key === 'maintenance' || key === 'margin' || key.startsWith('basket') || key.endsWith('Pct'))
+    return v + ' %';
+  if (key === 'reorderDays' || key === 's' || key === 'Q' || key === 'safetyDays' || key === 'orderEvery')
+    return v + ' d';
   return String(v);
 }
 

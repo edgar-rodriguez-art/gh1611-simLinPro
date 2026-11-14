@@ -38,7 +38,12 @@ export const ROLE_LABELS = {
 };
 
 /** Nombre corto en español para nombres de archivo de bitácora. */
-export const ROLE_FILE = { host: 'anfitrion', producer: 'productor', distributor: 'distribuidor', buyer: 'comprador' };
+export const ROLE_FILE = {
+  host: 'anfitrion',
+  producer: 'productor',
+  distributor: 'distribuidor',
+  buyer: 'comprador',
+};
 export const SECTOR_FILE = { bakery: 'panaderia', textile: 'textil', electronics: 'electronica' };
 
 /**
@@ -140,10 +145,27 @@ export const PARAM_DEFS = {
       def: (s) => round2(SECTORS[s].refCost * 1.25),
       step: 0.01,
     },
-    reorderDays: { label: 'Punto de reorden (días)', type: 'int', range: () => [1, 10], def: () => 3, step: 1 },
+    reorderDays: {
+      label: 'Punto de reorden (días)',
+      type: 'int',
+      range: () => [1, 10],
+      def: () => 3,
+      step: 1,
+    },
     supplier: { label: 'Proveedor', type: 'enum', options: ['A', 'B', 'C'], def: () => 'B' },
-    inspection: { label: 'Nivel de inspección', type: 'enum', options: ['low', 'medium', 'high'], def: () => 'medium' },
-    maintenance: { label: 'Mantenimiento preventivo (%)', type: 'int', range: () => [0, 15], def: () => 5, step: 1 },
+    inspection: {
+      label: 'Nivel de inspección',
+      type: 'enum',
+      options: ['low', 'medium', 'high'],
+      def: () => 'medium',
+    },
+    maintenance: {
+      label: 'Mantenimiento preventivo (%)',
+      type: 'int',
+      range: () => [0, 15],
+      def: () => 5,
+      step: 1,
+    },
   },
   distributor: {
     trucks: { label: 'Camiones', type: 'int', range: () => [1, 6], def: () => 2, step: 1 },
@@ -154,14 +176,32 @@ export const PARAM_DEFS = {
       def: (s) => SECTORS[s].truckCap.def,
       step: 1,
     },
-    routesPerDay: { label: 'Salidas de ruta por día', type: 'int', range: () => [1, 4], def: () => 2, step: 1 },
+    routesPerDay: {
+      label: 'Salidas de ruta por día',
+      type: 'int',
+      range: () => [1, 4],
+      def: () => 2,
+      step: 1,
+    },
     margin: { label: 'Margen de reventa (%)', type: 'int', range: () => [0, 60], def: () => 20, step: 1 },
     s: { label: 'Política s (días)', type: 'int', range: () => [0, 10], def: () => 2, step: 1 },
     Q: { label: 'Política Q (días)', type: 'int', range: () => [1, 20], def: () => 4, step: 1 },
   },
   buyer: {
-    basketBakery: { label: 'Cesta pan (%)', type: 'int', range: () => [0, 100], def: (s) => basketDefault(s, 'bakery'), step: 1 },
-    basketTextile: { label: 'Cesta textil (%)', type: 'int', range: () => [0, 100], def: (s) => basketDefault(s, 'textile'), step: 1 },
+    basketBakery: {
+      label: 'Cesta pan (%)',
+      type: 'int',
+      range: () => [0, 100],
+      def: (s) => basketDefault(s, 'bakery'),
+      step: 1,
+    },
+    basketTextile: {
+      label: 'Cesta textil (%)',
+      type: 'int',
+      range: () => [0, 100],
+      def: (s) => basketDefault(s, 'textile'),
+      step: 1,
+    },
     basketElectronics: {
       label: 'Cesta electrónica (%)',
       type: 'int',
@@ -169,14 +209,42 @@ export const PARAM_DEFS = {
       def: (s) => basketDefault(s, 'electronics'),
       step: 1,
     },
-    demandPct: { label: 'Demanda objetivo (%)', type: 'int', range: () => [50, 200], def: () => 100, step: 1 },
-    maxPricePct: { label: 'Precio máximo (% de ref.)', type: 'int', range: () => [50, 150], def: () => 130, step: 1 },
-    safetyDays: { label: 'Stock de seguridad (días)', type: 'int', range: () => [0, 7], def: () => 1, step: 1 },
-    orderEvery: { label: 'Frecuencia de pedido (días)', type: 'int', range: () => [1, 7], def: () => 1, step: 1 },
+    demandPct: {
+      label: 'Demanda objetivo (%)',
+      type: 'int',
+      range: () => [50, 200],
+      def: () => 100,
+      step: 1,
+    },
+    maxPricePct: {
+      label: 'Precio máximo (% de ref.)',
+      type: 'int',
+      range: () => [50, 150],
+      def: () => 130,
+      step: 1,
+    },
+    safetyDays: {
+      label: 'Stock de seguridad (días)',
+      type: 'int',
+      range: () => [0, 7],
+      def: () => 1,
+      step: 1,
+    },
+    orderEvery: {
+      label: 'Frecuencia de pedido (días)',
+      type: 'int',
+      range: () => [1, 7],
+      def: () => 1,
+      step: 1,
+    },
   },
 };
 
-export const BASKET_KEYS = { bakery: 'basketBakery', textile: 'basketTextile', electronics: 'basketElectronics' };
+export const BASKET_KEYS = {
+  bakery: 'basketBakery',
+  textile: 'basketTextile',
+  electronics: 'basketElectronics',
+};
 
 /** Cesta inicial: 70 % del sector del puesto y 15 % de cada uno de los otros dos. */
 function basketDefault(slotSector, sector) {
@@ -257,7 +325,8 @@ export function slotId(role, sector) {
 
 export function parseSlot(slot) {
   const [role, sector] = String(slot).split('-');
-  if (!ROLE_IDS.includes(/** @type {any} */ (role)) || !SECTOR_IDS.includes(/** @type {any} */ (sector))) return null;
+  if (!ROLE_IDS.includes(/** @type {any} */ (role)) || !SECTOR_IDS.includes(/** @type {any} */ (sector)))
+    return null;
   return { role: /** @type {RoleId} */ (role), sector: /** @type {SectorId} */ (sector) };
 }
 

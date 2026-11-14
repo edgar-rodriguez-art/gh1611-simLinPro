@@ -34,7 +34,11 @@ const LABEL_Y = 3.6;
 export function createWorld(container, opts = {}) {
   const mobile = !!opts.mobile;
   const reduced = !!opts.reduced;
-  const renderer = new THREE.WebGLRenderer({ antialias: !mobile, alpha: true, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({
+    antialias: !mobile,
+    alpha: true,
+    powerPreference: 'high-performance',
+  });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.0 : 1.5));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -50,7 +54,11 @@ export function createWorld(container, opts = {}) {
   const el = THREE.MathUtils.degToRad(35);
   const az = Math.PI / 4;
   const dist = 120;
-  camera.position.set(Math.cos(el) * Math.sin(az) * dist, Math.sin(el) * dist, Math.cos(el) * Math.cos(az) * dist);
+  camera.position.set(
+    Math.cos(el) * Math.sin(az) * dist,
+    Math.sin(el) * dist,
+    Math.cos(el) * Math.cos(az) * dist,
+  );
   camera.lookAt(0, 0, 0);
 
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -110,7 +118,9 @@ export function createWorld(container, opts = {}) {
     electronics: place(B.electronicsPlant(), stationPos('producer', 'electronics')),
   };
   const depot = place(B.warehouse(), uv(DEPOT.u, DEPOT.v));
-  const shops = Object.fromEntries(SECTOR_IDS.map((s) => [s, place(B.shop(SECTOR_COLOR[s]), stationPos('buyer', s))]));
+  const shops = Object.fromEntries(
+    SECTOR_IDS.map((s) => [s, place(B.shop(SECTOR_COLOR[s]), stationPos('buyer', s))]),
+  );
   const host = place(B.hostTower(), uv(HOST_POS.u, HOST_POS.v));
   const antennaPos = uv(HOST_POS.u, HOST_POS.v, 10.9);
 
@@ -122,23 +132,44 @@ export function createWorld(container, opts = {}) {
   const badges = {};
   for (const slot of ALL_SLOTS) {
     const [role, sector] = slot.split('-');
-    const b = badge({ title: `${ROLE_LABELS[role]} · ${SECTORS[sector].label}`, subtitle: 'BOT', color: roleColor(role, sector), icon: 'bot' });
+    const b = badge({
+      title: `${ROLE_LABELS[role]} · ${SECTORS[sector].label}`,
+      subtitle: 'BOT',
+      color: roleColor(role, sector),
+      icon: 'bot',
+    });
     // La altura se proyecta hacia arriba en pantalla: las etiquetas van bajas y delante del edificio
     const base = role === 'distributor' ? null : stationPos(role, sector);
-    const p = base ? base.add(uv(0, -2.2, LABEL_Y)) : uv(DEPOT.u - 1.2 + SECTOR_IDS.indexOf(sector) * 2.6, DEPOT.v - 3.6, LABEL_Y - 0.9 + SECTOR_IDS.indexOf(sector) * 0.9);
+    const p = base
+      ? base.add(uv(0, -2.2, LABEL_Y))
+      : uv(
+          DEPOT.u - 1.2 + SECTOR_IDS.indexOf(sector) * 2.6,
+          DEPOT.v - 3.6,
+          LABEL_Y - 0.9 + SECTOR_IDS.indexOf(sector) * 0.9,
+        );
     b.sprite.position.copy(p);
     scene.add(b.sprite);
     badges[slot] = b;
   }
   const supplierBadges = SECTOR_IDS.map((s) => {
-    const b = badge({ title: `Proveedor · ${SECTORS[s].supplierLabel}`, subtitle: 'BOT · A / B / C', color: 0x8a86a3, icon: 'bot' });
+    const b = badge({
+      title: `Proveedor · ${SECTORS[s].supplierLabel}`,
+      subtitle: 'BOT · A / B / C',
+      color: 0x8a86a3,
+      icon: 'bot',
+    });
     const p = stationPos('supplier', s).add(uv(0, -2.4, LABEL_Y - 0.6));
     b.sprite.position.copy(p);
     b.sprite.scale.multiplyScalar(0.8);
     scene.add(b.sprite);
     return b;
   });
-  const hostBadge = badge({ title: 'ANFITRIÓN · Servidor', subtitle: 'métricas · Monte Carlo · propuestas', color: PALETTE.host, icon: 'host' });
+  const hostBadge = badge({
+    title: 'ANFITRIÓN · Servidor',
+    subtitle: 'métricas · Monte Carlo · propuestas',
+    color: PALETTE.host,
+    icon: 'host',
+  });
   hostBadge.sprite.position.copy(uv(HOST_POS.u, HOST_POS.v, 12.6));
   scene.add(hostBadge.sprite);
 
@@ -191,7 +222,11 @@ export function createWorld(container, opts = {}) {
   // Pilas de cajas en los andenes (inventario del distribuidor)
   const crateGeo = new THREE.BoxGeometry(0.45, 0.45, 0.45);
   crateGeo.translate(0, 0.225, 0);
-  const crates = new THREE.InstancedMesh(crateGeo, new THREE.MeshLambertMaterial({ color: PALETTE.material, flatShading: true }), 30);
+  const crates = new THREE.InstancedMesh(
+    crateGeo,
+    new THREE.MeshLambertMaterial({ color: PALETTE.material, flatShading: true }),
+    30,
+  );
   crates.castShadow = true;
   scene.add(crates);
 
@@ -208,18 +243,25 @@ export function createWorld(container, opts = {}) {
   scene.add(flashLight);
   let flashUntil = 0;
 
-  const state = { lastTraffic: 0, smokeAt: Object.fromEntries(SECTOR_IDS.map((s) => [s, 0])), speedMul: 1, last: performance.now() };
+  const state = {
+    lastTraffic: 0,
+    smokeAt: Object.fromEntries(SECTOR_IDS.map((s) => [s, 0])),
+    speedMul: 1,
+    last: performance.now(),
+  };
 
   function resize() {
     const w = container.clientWidth || 1;
     const h = container.clientHeight || 1;
     renderer.setSize(w, h, false);
     const aspect = w / h;
-    const v = aspect < 1 ? VIEW * 1.05 : VIEW * 0.5;
+    // En vertical (móvil) el tablero debe caber a lo ancho y quedar en la parte alta (el panel ocupa la baja)
+    const v = aspect < 1 ? Math.max(VIEW * 0.6, 30 / aspect) : VIEW * 0.5;
+    const shift = aspect < 1 ? 0.45 : 0;
     camera.left = -v * aspect;
     camera.right = v * aspect;
-    camera.top = v;
-    camera.bottom = -v;
+    camera.top = v * (1 - shift);
+    camera.bottom = -v * (1 + shift);
     camera.updateProjectionMatrix();
   }
   const ro = new ResizeObserver(resize);
@@ -244,7 +286,8 @@ export function createWorld(container, opts = {}) {
       if (!P) continue;
       const par = P.params;
       // tasa de producción relativa (con inspección y mantenimiento)
-      const rate = P.status === 'run' ? (1 - INSPECTION[par.inspection].slowdown) * (1 - par.maintenance / 100) : 0;
+      const rate =
+        P.status === 'run' ? (1 - INSPECTION[par.inspection].slowdown) * (1 - par.maintenance / 100) : 0;
       const omega = rate * speed * (reduced ? 0.3 : 1) * 2.2;
       for (const sp of producers[s].userData.spin) sp.obj.rotation[sp.axis] += omega * sp.k * dt;
       // el proveedor gira mientras tiene pedidos en camino
@@ -292,7 +335,13 @@ export function createWorld(container, opts = {}) {
       const n = Math.min(10, Math.round(D.stock / Math.max(1, SECTORS[s].lambda * 0.5)));
       for (let i = 0; i < 10; i++, ci++) {
         if (i < n) {
-          o.position.copy(uv(DEPOT.u + DOCK_OFFSET[s] - 0.5 + (i % 3) * 0.5, DEPOT.v + 3.0 - Math.floor(i / 3) * 0.0, Math.floor(i / 3) * 0.47));
+          o.position.copy(
+            uv(
+              DEPOT.u + DOCK_OFFSET[s] - 0.5 + (i % 3) * 0.5,
+              DEPOT.v + 3.0 - Math.floor(i / 3) * 0.0,
+              Math.floor(i / 3) * 0.47,
+            ),
+          );
           o.position.add(uv(0, 0));
           o.scale.setScalar(1);
         } else o.scale.setScalar(0);
@@ -336,7 +385,11 @@ export function createWorld(container, opts = {}) {
       const human = ctl === 'human';
       badges[slot].update({
         title: `${ROLE_LABELS[role]} · ${SECTORS[sector].label}`,
-        subtitle: human ? `Humano · ${r?.alias || 'jugador'}${r && !r.connected ? ' (desconectado)' : ''}` : slots[slot]?.conservative ? 'BOT conservador' : 'BOT',
+        subtitle: human
+          ? `Humano · ${r?.alias || 'jugador'}${r && !r.connected ? ' (desconectado)' : ''}`
+          : slots[slot]?.conservative
+            ? 'BOT conservador'
+            : 'BOT',
         color: roleColor(role, sector),
         icon: human ? 'human' : 'bot',
       });
@@ -356,7 +409,8 @@ export function createWorld(container, opts = {}) {
       const s = ev.sector;
       switch (ev.type) {
         case 'input_delivery':
-          for (let i = 0; i < 3; i++) boxes.add({ curve: supplyRoutes[s], start: now + i * 220, dur: dur + 300, lift: 0.25 });
+          for (let i = 0; i < 3; i++)
+            boxes.add({ curve: supplyRoutes[s], start: now + i * 220, dur: dur + 300, lift: 0.25 });
           break;
         case 'ship_to_dist': {
           const v = vans.find((x) => x.userData.sector === s && !x.userData.busy);
@@ -378,11 +432,23 @@ export function createWorld(container, opts = {}) {
           }
           const n = Math.min(4, 1 + Math.floor(Math.log10(Math.max(1, ev.amount))));
           for (let i = 0; i < n; i++)
-            coins.add({ from: from.clone().setY(1.2), to: to.clone().setY(1.2), start: now + i * 140, dur: dur, arc: 2.6, spin: 1 });
+            coins.add({
+              from: from.clone().setY(1.2),
+              to: to.clone().setY(1.2),
+              start: now + i * 140,
+              dur: dur,
+              arc: 2.6,
+              spin: 1,
+            });
           break;
         }
         case 'lot_done':
-          if (!reduced) rings.spawn(stationPos('producer', s).setY(0.3), now, { color: PALETTE.material, dur: 900, max: 2.5 });
+          if (!reduced)
+            rings.spawn(stationPos('producer', s).setY(0.3), now, {
+              color: PALETTE.material,
+              dur: 900,
+              max: 2.5,
+            });
           break;
         case 'proposal_flash':
           flash(ev.slot);

@@ -7,7 +7,16 @@ import { h, fmt, toast } from './dom.js';
 import { slotMap } from './lobby.js';
 import { iconSvg } from './icons.js';
 import { paramValueLabel } from './proposal-modal.js';
-import { ALL_SLOTS, SECTOR_IDS, SECTORS, ROLE_LABELS, SPEEDS, PARAM_DEFS, MC_N_RANGE, parseSlot } from '../config.js';
+import {
+  ALL_SLOTS,
+  SECTOR_IDS,
+  SECTORS,
+  ROLE_LABELS,
+  SPEEDS,
+  PARAM_DEFS,
+  MC_N_RANGE,
+  parseSlot,
+} from '../config.js';
 import { ROLE_KPIS } from '../sim/montecarlo.js';
 
 const SLOT_COLORS = { bakery: '#d2553a', textile: '#8e6fd1', electronics: '#2f80d1' };
@@ -33,25 +42,45 @@ export function buildHostDashboard(o) {
   const startBtn = h('button', { class: 'primary', text: 'Iniciar partida', onclick: () => o.onStart() });
   const speedSeg = h('div', { class: 'seg', role: 'group', 'aria-label': 'Velocidad' });
   const speedBtns = SPEEDS.map((s) =>
-    h('button', { type: 'button', text: '×' + String(s).replace('.', ','), onclick: () => o.host.setSpeed(s) }),
+    h('button', {
+      type: 'button',
+      text: '×' + String(s).replace('.', ','),
+      onclick: () => o.host.setSpeed(s),
+    }),
   );
   speedSeg.append(...speedBtns);
-  const pauseBtn = h('button', { class: 'ghost small', text: 'Pausa de emergencia', onclick: () => o.host.setPaused(!o.host.paused) });
+  const pauseBtn = h('button', {
+    class: 'ghost small',
+    text: 'Pausa de emergencia',
+    onclick: () => o.host.setPaused(!o.host.paused),
+  });
   root.append(
     h('section', { class: 'section' }, [
-      h('header', {}, [h('h3', { text: o.demo ? 'Modo demo local' : 'Sala' }), h('span', { class: 'room-code', text: o.room })]),
+      h('header', {}, [
+        h('h3', { text: o.demo ? 'Modo demo local' : 'Sala' }),
+        h('span', { class: 'room-code', text: o.room }),
+      ]),
       o.demo
-        ? h('p', { class: 'muted tiny', text: 'Todo corre en este dispositivo. Los puestos que no son tuyos los juegan BOT.' })
+        ? h('p', {
+            class: 'muted tiny',
+            text: 'Todo corre en este dispositivo. Los puestos que no son tuyos los juegan BOT.',
+          })
         : h('div', { class: 'row' }, [
             qrBox,
             h('div', { class: 'grow stack tiny' }, [
-              h('span', { class: 'muted', text: 'Los jugadores entran escaneando el QR o con el código en:' }),
+              h('span', {
+                class: 'muted',
+                text: 'Los jugadores entran escaneando el QR o con el código en:',
+              }),
               h('code', { text: joinUrl(o.room).replace(/\?.*/, '') }),
             ]),
           ]),
       slotsBox,
       h('div', { class: 'row' }, [startBtn, h('span', { class: 'grow' }), pauseBtn]),
-      h('div', { class: 'param' }, [h('div', { class: 'top' }, [h('span', { text: 'Velocidad (1 día = 60 s con ×1)' })]), speedSeg]),
+      h('div', { class: 'param' }, [
+        h('div', { class: 'top' }, [h('span', { text: 'Velocidad (1 día = 60 s con ×1)' })]),
+        speedSeg,
+      ]),
     ]),
   );
 
@@ -64,7 +93,13 @@ export function buildHostDashboard(o) {
       h('div', { class: 'table-wrap' }, [
         h('table', { class: 'grid' }, [
           h('thead', {}, [
-            h('tr', {}, ['Puesto', 'Caja', 'Margen', 'KPI clave', 'Fill/OTIF', 'Lead P95', 'Látigo'].map((t) => h('th', { text: t }))),
+            h(
+              'tr',
+              {},
+              ['Puesto', 'Caja', 'Margen', 'KPI clave', 'Fill/OTIF', 'Lead P95', 'Látigo'].map((t) =>
+                h('th', { text: t }),
+              ),
+            ),
           ]),
           kpiBody,
         ]),
@@ -76,7 +111,12 @@ export function buildHostDashboard(o) {
 
   // ───── Datos de España ─────
   const dataBox = h('div', { class: 'tiny stack' });
-  root.append(h('section', { class: 'section' }, [h('header', {}, [h('h3', { text: 'Datos reales de España' })]), dataBox]));
+  root.append(
+    h('section', { class: 'section' }, [
+      h('header', {}, [h('h3', { text: 'Datos reales de España' })]),
+      dataBox,
+    ]),
+  );
   renderData(dataBox, o.metrics);
 
   // ───── Monte Carlo ─────
@@ -91,10 +131,20 @@ export function buildHostDashboard(o) {
     )
   );
   const mcN = /** @type {HTMLInputElement} */ (
-    h('input', { type: 'number', min: MC_N_RANGE[0], max: MC_N_RANGE[1], step: 100, value: o.n, 'aria-label': 'Réplicas N' })
+    h('input', {
+      type: 'number',
+      min: MC_N_RANGE[0],
+      max: MC_N_RANGE[1],
+      step: 100,
+      value: o.n,
+      'aria-label': 'Réplicas N',
+    })
   );
   const mcBtn = h('button', { class: 'primary', text: 'Analizar' });
-  const mcInfo = h('div', { class: 'tiny muted', text: 'Simula 14 días desde el estado actual: línea base frente a variaciones de ±10 % y ±20 % de cada parámetro.' });
+  const mcInfo = h('div', {
+    class: 'tiny muted',
+    text: 'Simula 14 días desde el estado actual: línea base frente a variaciones de ±10 % y ±20 % de cada parámetro.',
+  });
   const histBox = h('div', { class: 'hist' });
   const rankBox = h('div', { class: 'table-wrap' });
   mcBtn.addEventListener('click', async () => {
@@ -113,7 +163,11 @@ export function buildHostDashboard(o) {
   root.append(
     h('section', { class: 'section' }, [
       h('header', {}, [h('h3', { text: 'Monte Carlo y propuestas' })]),
-      h('div', { class: 'row' }, [h('div', { class: 'grow' }, [mcSlot]), h('div', { style: { width: '96px' } }, [mcN]), mcBtn]),
+      h('div', { class: 'row' }, [
+        h('div', { class: 'grow' }, [mcSlot]),
+        h('div', { style: { width: '96px' } }, [mcN]),
+        mcBtn,
+      ]),
       mcInfo,
       histBox,
       rankBox,
@@ -121,17 +175,34 @@ export function buildHostDashboard(o) {
   );
 
   // ───── Propuestas y bitácoras ─────
-  const propList = h('div', { class: 'tiny stack' }, [h('span', { class: 'muted', text: 'Aún no hay propuestas.' })]);
+  const propList = h('div', { class: 'tiny stack' }, [
+    h('span', { class: 'muted', text: 'Aún no hay propuestas.' }),
+  ]);
   const chat = h('div', { class: 'chat-log' });
   root.append(
-    h('section', { class: 'section' }, [h('header', {}, [h('h3', { text: 'Historial de propuestas' })]), propList]),
+    h('section', { class: 'section' }, [
+      h('header', {}, [h('h3', { text: 'Historial de propuestas' })]),
+      propList,
+    ]),
     h('section', { class: 'section' }, [
       h('header', {}, [h('h3', { text: 'Bitácoras' })]),
       h('div', { class: 'row' }, [
-        o.demo ? null : h('button', { text: 'Pedir bitácoras a todos', onclick: () => (o.host.requestLogs(), toast('Petición enviada a todos los jugadores.')) }),
-        h('button', { class: 'ghost', text: 'Descargar bitácora del anfitrión', onclick: () => o.onDownloadLog() }),
+        o.demo
+          ? null
+          : h('button', {
+              text: 'Pedir bitácoras a todos',
+              onclick: () => (o.host.requestLogs(), toast('Petición enviada a todos los jugadores.')),
+            }),
+        h('button', {
+          class: 'ghost',
+          text: 'Descargar bitácora del anfitrión',
+          onclick: () => o.onDownloadLog(),
+        }),
       ]),
-      h('div', { class: 'tiny muted', text: 'Sube los .json a la carpeta logs/ del repositorio (ver logs/README.md).' }),
+      h('div', {
+        class: 'tiny muted',
+        text: 'Sube los .json a la carpeta logs/ del repositorio (ver logs/README.md).',
+      }),
     ]),
     h('section', { class: 'section' }, [h('header', {}, [h('h3', { text: 'Mensajes' })]), chat]),
   );
@@ -139,12 +210,20 @@ export function buildHostDashboard(o) {
   o.host.on('proposal_resolved', (e) => {
     if (propList.firstChild && propList.firstChild.textContent?.startsWith('Aún')) propList.innerHTML = '';
     const p = /** @type {any} */ (parseSlot(e.slot));
-    const ch = Object.entries(e.changes).map(([k, v]) => `${PARAM_DEFS[p.role][k]?.label || k}: ${paramValueLabel(k, e.before[k])} → ${paramValueLabel(k, v)}`).join(', ');
+    const ch = Object.entries(e.changes)
+      .map(
+        ([k, v]) =>
+          `${PARAM_DEFS[p.role][k]?.label || k}: ${paramValueLabel(k, e.before[k])} → ${paramValueLabel(k, v)}`,
+      )
+      .join(', ');
     const cls = e.decision === 'aceptada' ? 'ok' : e.decision === 'expirada' ? 'warn' : 'bad';
     propList.prepend(
       h('div', { class: 'row' }, [
         h('span', { class: 'chip ' + cls, text: e.decision }),
-        h('span', { class: 'grow', text: `${ROLE_LABELS[p.role]} ${SECTORS[p.sector].label} (${e.decidedBy}): ${ch}` }),
+        h('span', {
+          class: 'grow',
+          text: `${ROLE_LABELS[p.role]} ${SECTORS[p.sector].label} (${e.decidedBy}): ${ch}`,
+        }),
       ]),
     );
     toast(`Propuesta ${e.decision} por ${ROLE_LABELS[p.role]} · ${SECTORS[p.sector].label}`);
@@ -163,7 +242,12 @@ export function buildHostDashboard(o) {
       `Beneficio base a 14 días: P5 ${fmt.eur(res.baseline.p5)} · P50 ${fmt.eur(res.baseline.p50)} · P95 ${fmt.eur(res.baseline.p95)}.`,
     );
     if (res.reduced)
-      mcInfo.append(h('div', { class: 'alert', text: `Se redujo N de ${res.nRequested} a ${res.nUsed} para no superar 3 s en este equipo.` }));
+      mcInfo.append(
+        h('div', {
+          class: 'alert',
+          text: `Se redujo N de ${res.nRequested} a ${res.nUsed} para no superar 3 s en este equipo.`,
+        }),
+      );
     // Histograma: base frente al mejor candidato
     histBox.innerHTML = '';
     if (res.hist && res.hist.edges.length) {
@@ -176,11 +260,26 @@ export function buildHostDashboard(o) {
           height: 170,
           legend: { show: true },
           scales: { x: { time: false } },
-          axes: [{ values: (u, v) => v.map((x) => fmt.eur(x)), size: 30, font: '10px system-ui' }, { size: 34, font: '10px system-ui' }],
+          axes: [
+            { values: (u, v) => v.map((x) => fmt.eur(x)), size: 30, font: '10px system-ui' },
+            { size: 34, font: '10px system-ui' },
+          ],
           series: [
             { label: 'Beneficio 14 d' },
-            { label: 'Base', stroke: '#8a86a3', fill: 'rgba(138,134,163,0.35)', paths: uPlot.paths.bars({ size: [0.9, 30] }), points: { show: false } },
-            { label: 'Mejor', stroke: '#5b3fb8', fill: 'rgba(91,63,184,0.45)', paths: uPlot.paths.bars({ size: [0.9, 30] }), points: { show: false } },
+            {
+              label: 'Base',
+              stroke: '#8a86a3',
+              fill: 'rgba(138,134,163,0.35)',
+              paths: uPlot.paths.bars({ size: [0.9, 30] }),
+              points: { show: false },
+            },
+            {
+              label: 'Mejor',
+              stroke: '#5b3fb8',
+              fill: 'rgba(91,63,184,0.45)',
+              paths: uPlot.paths.bars({ size: [0.9, 30] }),
+              points: { show: false },
+            },
           ],
         },
         /** @type {any} */ (data),
@@ -225,11 +324,26 @@ export function buildHostDashboard(o) {
     rankBox.append(
       h('table', { class: 'grid' }, [
         h('thead', {}, [
-          h('tr', {}, ['Candidato', 'Δ beneficio', 'Δ ' + kd[0].label, 'Δ ' + kd[1].label, 'P(mejora)', 'Riesgo P5', ''].map((t) => h('th', { text: t }))),
+          h(
+            'tr',
+            {},
+            [
+              'Candidato',
+              'Δ beneficio',
+              'Δ ' + kd[0].label,
+              'Δ ' + kd[1].label,
+              'P(mejora)',
+              'Riesgo P5',
+              '',
+            ].map((t) => h('th', { text: t })),
+          ),
         ]),
         h('tbody', {}, rows),
       ]),
-      h('div', { class: 'tiny muted', text: 'Tú eliges qué propuesta enviar; nunca se envía sola. Un BOT acepta si P(mejora) ≥ 60 % y el riesgo P5 ≤ 5 %.' }),
+      h('div', {
+        class: 'tiny muted',
+        text: 'Tú eliges qué propuesta enviar; nunca se envía sola. Un BOT acepta si P(mejora) ≥ 60 % y el riesgo P5 ≤ 5 %.',
+      }),
     );
   }
 
@@ -261,7 +375,12 @@ export function buildHostDashboard(o) {
         const p = /** @type {any} */ (parseSlot(slot));
         const k = last?.[slot] || {};
         const ctl = eng.state.slots[slot];
-        const main = p.role === 'producer' ? ['OEE', k.oee] : p.role === 'distributor' ? ['Util.', k.fleetUtil] : ['Perdidas', k.lost];
+        const main =
+          p.role === 'producer'
+            ? ['OEE', k.oee]
+            : p.role === 'distributor'
+              ? ['Util.', k.fleetUtil]
+              : ['Perdidas', k.lost];
         kpiBody.append(
           h('tr', {}, [
             h('td', {
@@ -269,7 +388,14 @@ export function buildHostDashboard(o) {
             }),
             h('td', { class: k.cash < 0 ? 'neg' : '', text: fmt.eur(k.cash) }),
             h('td', { class: k.margin < 0 ? 'neg' : 'pos', text: fmt.eur(k.margin) }),
-            h('td', { text: main[1] === undefined ? '—' : p.role === 'buyer' ? fmt.int(main[1]) : `${main[0]} ${fmt.pct(main[1])}` }),
+            h('td', {
+              text:
+                main[1] === undefined
+                  ? '—'
+                  : p.role === 'buyer'
+                    ? fmt.int(main[1])
+                    : `${main[0]} ${fmt.pct(main[1])}`,
+            }),
             h('td', { text: fmt.pct(p.role === 'distributor' ? k.otif : k.fillRate) }),
             h('td', { text: p.role === 'distributor' ? fmt.hours(k.leadP95) : '—' }),
             h('td', { text: fmt.num(k.bullwhip) }),
@@ -287,12 +413,24 @@ export function buildHostDashboard(o) {
               height: 160,
               legend: { show: false },
               scales: { x: { time: false } },
-              axes: [{ size: 24, font: '10px system-ui' }, { size: 44, font: '10px system-ui', values: (u, v) => v.map((x) => (Math.abs(x) >= 1000 ? Math.round(x / 1000) + 'k' : x)) }],
+              axes: [
+                { size: 24, font: '10px system-ui' },
+                {
+                  size: 44,
+                  font: '10px system-ui',
+                  values: (u, v) => v.map((x) => (Math.abs(x) >= 1000 ? Math.round(x / 1000) + 'k' : x)),
+                },
+              ],
               series: [
                 { label: 'Día' },
                 ...ALL_SLOTS.map((s) => {
                   const p = /** @type {any} */ (parseSlot(s));
-                  return { label: s, stroke: SLOT_COLORS[p.sector], width: 1.5, dash: p.role === 'producer' ? undefined : p.role === 'distributor' ? [6, 3] : [2, 3] };
+                  return {
+                    label: s,
+                    stroke: SLOT_COLORS[p.sector],
+                    width: 1.5,
+                    dash: p.role === 'producer' ? undefined : p.role === 'distributor' ? [6, 3] : [2, 3],
+                  };
                 }),
               ],
             },
@@ -308,7 +446,14 @@ export function buildHostDashboard(o) {
 function renderData(box, m) {
   box.innerHTML = '';
   if (!m) return;
-  box.append(h('div', {}, [h('b', { text: 'Fuente: ' }), m.fuente, ` · consultado ${m.fecha}`, m.cacheFecha ? ` · caché ${String(m.cacheFecha).slice(0, 10)}` : '']));
+  box.append(
+    h('div', {}, [
+      h('b', { text: 'Fuente: ' }),
+      m.fuente,
+      ` · consultado ${m.fecha}`,
+      m.cacheFecha ? ` · caché ${String(m.cacheFecha).slice(0, 10)}` : '',
+    ]),
+  );
   for (const s of SECTOR_IDS) {
     const x = m.sectors[s];
     box.append(
@@ -322,5 +467,10 @@ function renderData(box, m) {
       text: `Inflación (IPCA/IPC): ${fmt.num(m.hicp.rate)} % · periodo ${m.hicp.period || '—'} · ${m.hicp.fuente}${m.hicp.via === 'cache' ? ' (caché)' : ''}${m.hicp.stale ? ' · ¡serie desactualizada!' : ''}`,
     }),
   );
-  box.append(h('div', { class: 'muted', text: 'λ sector = λ base × índice / 100 · costo de insumos × (1 + IPCA/12) cada 30 días.' }));
+  box.append(
+    h('div', {
+      class: 'muted',
+      text: 'λ sector = λ base × índice / 100 · costo de insumos × (1 + IPCA/12) cada 30 días.',
+    }),
+  );
 }

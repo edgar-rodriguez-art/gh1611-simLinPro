@@ -1,6 +1,14 @@
 // @ts-check
 // Orquestación de Monte Carlo (§7): cribado de candidatos, top 3, combinaciones y presupuesto de 3 s.
-import { buildCandidates, combine, mergeResults, compare, histogram2, describe, runScenarios } from './montecarlo.js';
+import {
+  buildCandidates,
+  combine,
+  mergeResults,
+  compare,
+  histogram2,
+  describe,
+  runScenarios,
+} from './montecarlo.js';
 import { MC_BUDGET_MS, MC_DEFAULT_N, MC_HORIZON_DAYS, parseSlot } from '../config.js';
 
 const SCREEN_N = 30;
@@ -99,7 +107,11 @@ export async function analyzeSlot(o) {
       if (top3[i].param !== top3[j].param) combos.push(combine(top3[i], top3[j]));
 
   // Etapa 2: base + top 3 + combinaciones con el N que quepa en el presupuesto
-  const scen2 = [{ id: 'base', changes: null }, ...top3.map(({ id, param, changes }) => ({ id, param, changes })), ...combos];
+  const scen2 = [
+    { id: 'base', changes: null },
+    ...top3.map(({ id, param, changes }) => ({ id, param, changes })),
+    ...combos,
+  ];
   const remaining = Math.max(0, budget - elapsed1);
   const fit = Math.floor((remaining * o.runner.size) / (msPerRun * scen2.length));
   const nEff = Math.max(screenN, Math.min(N, fit));

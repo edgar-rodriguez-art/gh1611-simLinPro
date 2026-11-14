@@ -74,7 +74,8 @@ function showLobby(message = '') {
     onJoin: (c, alias) => startJoin(c, alias),
     onDemo: (slot, alias, o) => startDemo(slot, alias, o),
   });
-  if (code && isValidRoomCode(code)) /** @type {HTMLInputElement|null} */ (app.querySelector('#join-alias'))?.focus();
+  if (code && isValidRoomCode(code))
+    /** @type {HTMLInputElement|null} */ (app.querySelector('#join-alias'))?.focus();
 }
 
 function loading(text) {
@@ -96,7 +97,11 @@ async function gameScreen({ wide = false }) {
   ]);
   sceneEl.append(tools, legend);
   const panel = h('aside', { class: 'panel' + (mobile ? ' collapsed' : ''), 'aria-label': 'Panel' });
-  const handle = h('button', { class: 'sheet-handle', text: 'Panel', onclick: () => panel.classList.toggle('collapsed') });
+  const handle = h('button', {
+    class: 'sheet-handle',
+    text: 'Panel',
+    onclick: () => panel.classList.toggle('collapsed'),
+  });
   const panelBody = h('div', { class: 'stack' });
   panel.append(handle, panelBody);
   app.append(
@@ -184,7 +189,13 @@ async function startHost(cfg, resume = null, extra = {}) {
   });
   loggers.push(logger);
   if (resume?.players) {
-    for (const [pid, p] of resume.players) host.players.set(pid, { alias: p.alias, slot: p.slot, connId: null, disconnectedAt: performance.now() });
+    for (const [pid, p] of resume.players)
+      host.players.set(pid, {
+        alias: p.alias,
+        slot: p.slot,
+        connId: null,
+        disconnectedAt: performance.now(),
+      });
   }
 
   const save = () => {
@@ -243,7 +254,12 @@ async function startHost(cfg, resume = null, extra = {}) {
       controlLog: engine.state.controlLog,
       controladoresIniciales: {},
     });
-    logger.setNet({ rtts: [], disconnections: host.netStats.disconnections, rejected: host.netStats.rejected, received: host.netStats.received });
+    logger.setNet({
+      rtts: [],
+      disconnections: host.netStats.disconnections,
+      rejected: host.netStats.rejected,
+      received: host.netStats.received,
+    });
     logger.o.config.velocidad = host.speed;
     if (engine.state.over) logger.finish();
     logger.download();
@@ -288,7 +304,17 @@ async function startHost(cfg, resume = null, extra = {}) {
   if (demo) {
     const [a, b] = loopbackPair();
     host.addConnection(a);
-    demoClient = await playerSession({ ui, client: new GameClient({ playerId: 'demo-' + randomSeed(), alias: cfg.alias }), conn: b, slot: extra.demoSlot, demo: true, room, partidaId, seed: engine.state.seed, days: engine.state.days });
+    demoClient = await playerSession({
+      ui,
+      client: new GameClient({ playerId: 'demo-' + randomSeed(), alias: cfg.alias }),
+      conn: b,
+      slot: extra.demoSlot,
+      demo: true,
+      room,
+      partidaId,
+      seed: engine.state.seed,
+      days: engine.state.days,
+    });
     const mine = demoClient.panel;
     const tabs = h('div', { class: 'tabs', role: 'tablist' });
     const t1 = h('button', { class: 'on', text: 'Mi puesto' });
@@ -359,16 +385,22 @@ async function startHost(cfg, resume = null, extra = {}) {
       host.update();
       const room2 = host.roomStateMsg();
       const view = buildSnapshotData(engine);
-      world.update(view, host.simTime(), { speed: host.speed, paused: host.paused || !host.started, room: room2 });
+      world.update(view, host.simTime(), {
+        speed: host.speed,
+        paused: host.paused || !host.started,
+        room: room2,
+      });
       const now = performance.now();
       if (now - lastDash > 250) {
         lastDash = now;
         dash.update(room2);
-        cClock.textContent = clockText(host.simTime(), engine.state.days) + (host.paused ? ' · en pausa' : host.started ? ` · ×${host.speed}` : ' · esperando inicio');
+        cClock.textContent =
+          clockText(host.simTime(), engine.state.days) +
+          (host.paused ? ' · en pausa' : host.started ? ` · ×${host.speed}` : ' · esperando inicio');
         cPlayers.innerHTML = `${iconSvg('human', 14)} ${host.connectedCount()} / 9`;
       }
     },
-    (fps) => logger.sampleFps(fps),
+    (fps) => loggers.forEach((l) => l.sampleFps(fps)),
   );
 
   teardown = () => {
@@ -398,16 +430,29 @@ async function playerSession(o) {
   let lastDay = -1;
   let proposalOpen = /** @type {any} */ (null);
 
-  const pickBox = h('section', { class: 'section' }, [h('header', {}, [h('h3', { text: 'Elige tu puesto' })])]);
+  const pickBox = h('section', { class: 'section' }, [
+    h('header', {}, [h('h3', { text: 'Elige tu puesto' })]),
+  ]);
   const pickGrid = h('div');
-  pickBox.append(pickGrid, h('p', { class: 'tiny muted', text: 'Los puestos libres los juega un BOT. Si te desconectas más de 15 s, un BOT toma tu puesto con tus parámetros y lo recuperas al volver.' }));
+  pickBox.append(
+    pickGrid,
+    h('p', {
+      class: 'tiny muted',
+      text: 'Los puestos libres los juega un BOT. Si te desconectas más de 15 s, un BOT toma tu puesto con tus parámetros y lo recuperas al volver.',
+    }),
+  );
   panel.append(pickBox);
 
   const feedback = buildFeedback((v, t) => logger?.setFeedback(v, t));
 
   const downloadLog = () => {
     if (!logger) return toast('Elige un puesto primero.');
-    logger.setNet({ rtts: client.rtts, disconnections: client.stats.disconnections, rejected: client.stats.rejected, received: client.stats.received });
+    logger.setNet({
+      rtts: client.rtts,
+      disconnections: client.stats.disconnections,
+      rejected: client.stats.rejected,
+      received: client.stats.received,
+    });
     logger.download();
   };
 
@@ -438,19 +483,36 @@ async function playerSession(o) {
     const make = { producer: producerHud, distributor: distributorHud, buyer: buyerHud }[ps.role];
     hud?.el.remove();
     hud = make(m.slot, (changes) => client.setParams(changes));
-    panel.append(hud.el, feedback.el, h('section', { class: 'section' }, [
-      h('header', {}, [h('h3', { text: 'Bitácora' })]),
-      h('button', { class: 'ghost', text: 'Descargar bitácora', onclick: downloadLog }),
-      h('div', { class: 'tiny muted', text: 'Súbela a la carpeta logs/ del repositorio al terminar.' }),
-    ]));
-    ui.tools.prepend(h('button', { class: 'small primary', text: 'Centrar en mi puesto', onclick: () => world.focus(m.slot) }));
+    panel.append(
+      hud.el,
+      feedback.el,
+      h('section', { class: 'section' }, [
+        h('header', {}, [h('h3', { text: 'Bitácora' })]),
+        h('button', { class: 'ghost', text: 'Descargar bitácora', onclick: downloadLog }),
+        h('div', { class: 'tiny muted', text: 'Súbela a la carpeta logs/ del repositorio al terminar.' }),
+      ]),
+    );
+    ui.tools.prepend(
+      h('button', {
+        class: 'small primary',
+        text: 'Centrar en mi puesto',
+        onclick: () => world.focus(m.slot),
+      }),
+    );
     world.focus(m.slot);
     toast(`Juegas como ${ROLE_LABELS[ps.role]} · ${SECTORS[ps.sector].label}`);
   });
   client.on('params', (m) => {
     if (m.slot !== client.slot || !logger) return;
     for (const [k, v] of Object.entries(m.changes)) {
-      logger.param({ t: client.simT, slot: m.slot, param: k, old: prevParams[k] ?? null, new: v, origin: m.origin });
+      logger.param({
+        t: client.simT,
+        slot: m.slot,
+        param: k,
+        old: prevParams[k] ?? null,
+        new: v,
+        origin: m.origin,
+      });
       prevParams[k] = v;
     }
     if (m.origin === 'jugador') toast('Parámetros aplicados por el anfitrión.', 1800);
@@ -476,7 +538,13 @@ async function playerSession(o) {
       onAnswer: (accept) => {
         proposalOpen = null;
         client.answerProposal(p.id, accept);
-        logger?.proposal({ ...p, t: client.simT, decision: accept ? 'aceptada' : 'rechazada', decidedBy: 'jugador', responseMs: Math.round(performance.now() - t0) });
+        logger?.proposal({
+          ...p,
+          t: client.simT,
+          decision: accept ? 'aceptada' : 'rechazada',
+          decidedBy: 'jugador',
+          responseMs: Math.round(performance.now() - t0),
+        });
       },
     });
   });
@@ -513,7 +581,9 @@ async function startJoin(code, alias) {
   const cLat = chip('— ms');
   const cClock = chip('');
   ui.chips.append(cRoom, cClock, cNet, cLat);
-  ui.tools.append(h('button', { class: 'small', text: 'Vista general', onclick: () => ui.world.resetView() }));
+  ui.tools.append(
+    h('button', { class: 'small', text: 'Vista general', onclick: () => ui.world.resetView() }),
+  );
   const session = await playerSession({ ui, client, room: code });
   const diag = h('div', { class: 'alert hidden', role: 'alert' });
   ui.panelBody.append(diag, session.panel);
@@ -534,7 +604,9 @@ async function startJoin(code, alias) {
       message,
       h('ul', { class: 'tiny' }, [
         h('li', { text: 'Comprueba el código y que el anfitrión tenga la sala abierta.' }),
-        h('li', { text: 'Las redes de algunos centros bloquean WebRTC (UDP): conecta todos los dispositivos al punto de acceso de un móvil.' }),
+        h('li', {
+          text: 'Las redes de algunos centros bloquean WebRTC (UDP): conecta todos los dispositivos al punto de acceso de un móvil.',
+        }),
         h('li', { text: 'Si no hay red, usa el modo demo local.' }),
       ]),
       h('div', { class: 'row' }, [
@@ -554,7 +626,8 @@ async function startJoin(code, alias) {
     () => {
       const t = client.simTime();
       ui.world.update(client.data, t, { speed: client.speed, paused: client.paused, room: client.room });
-      if (client.data.meta) cClock.textContent = clockText(t, client.data.meta.days) + (client.paused ? ' · en pausa' : '');
+      if (client.data.meta)
+        cClock.textContent = clockText(t, client.data.meta.days) + (client.paused ? ' · en pausa' : '');
     },
     (fps) => loggers.forEach((l) => l.sampleFps(fps)),
   );
@@ -585,10 +658,16 @@ function buildFeedback(onChange) {
       },
     }),
   );
-  const text = /** @type {HTMLTextAreaElement} */ (h('textarea', { rows: 2, maxlength: 2000, placeholder: '¿Qué mejorarías? (opcional)' }));
+  const text = /** @type {HTMLTextAreaElement} */ (
+    h('textarea', { rows: 2, maxlength: 2000, placeholder: '¿Qué mejorarías? (opcional)' })
+  );
   text.addEventListener('change', () => onChange(value, text.value));
   return {
-    el: h('section', { class: 'section' }, [h('header', {}, [h('h3', { text: 'Tu valoración' })]), h('div', { class: 'row' }, stars), text]),
+    el: h('section', { class: 'section' }, [
+      h('header', {}, [h('h3', { text: 'Tu valoración' })]),
+      h('div', { class: 'row' }, stars),
+      text,
+    ]),
   };
 }
 
@@ -605,8 +684,22 @@ function gameOverModal(summary, onDownload, mySlot = null) {
   const back = h('div', { class: 'modal-back', role: 'dialog', 'aria-modal': 'true' }, [
     h('div', { class: 'modal' }, [
       h('h2', { text: 'Fin de la partida' }),
-      h('p', { class: 'muted', text: `${summary.days} días simulados · ${summary.proposals} propuestas · ${summary.bankruptcies.length} quiebras.` }),
-      h('div', { class: 'table-wrap' }, [h('table', { class: 'grid' }, [h('thead', {}, [h('tr', {}, ['Puesto', 'Caja', 'Fill/OTIF'].map((t) => h('th', { text: t })))]), h('tbody', {}, rows)])]),
+      h('p', {
+        class: 'muted',
+        text: `${summary.days} días simulados · ${summary.proposals} propuestas · ${summary.bankruptcies.length} quiebras.`,
+      }),
+      h('div', { class: 'table-wrap' }, [
+        h('table', { class: 'grid' }, [
+          h('thead', {}, [
+            h(
+              'tr',
+              {},
+              ['Puesto', 'Caja', 'Fill/OTIF'].map((t) => h('th', { text: t })),
+            ),
+          ]),
+          h('tbody', {}, rows),
+        ]),
+      ]),
       h('p', { class: 'tiny muted', text: 'Valora la partida en el panel antes de descargar tu bitácora.' }),
       h('div', { class: 'row' }, [
         h('button', { class: 'primary grow', text: 'Descargar bitácora', onclick: () => onDownload() }),

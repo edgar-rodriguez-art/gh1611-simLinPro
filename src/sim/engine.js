@@ -14,7 +14,13 @@ import {
 } from '../config.js';
 import { Rng } from './rng.js';
 import { createProducer, producerTick, newAcc, mtbfFor } from './entities/producer.js';
-import { createDistributor, distributorTick, newDistAcc, syncTrucks, distPrice } from './entities/distributor.js';
+import {
+  createDistributor,
+  distributorTick,
+  newDistAcc,
+  syncTrucks,
+  distPrice,
+} from './entities/distributor.js';
 import { createBuyer, buyerTick, newBuyerAcc } from './entities/buyer.js';
 import { updatePriceIndex } from './entities/supplier.js';
 import { runBotsDaily } from './bots.js';
@@ -60,7 +66,11 @@ export class Engine {
     };
     for (const s of SECTOR_IDS) {
       state.producers[s] = createProducer(s, defaultParams('producer', s), initialCash('producer', s));
-      state.distributors[s] = createDistributor(s, defaultParams('distributor', s), initialCash('distributor', s));
+      state.distributors[s] = createDistributor(
+        s,
+        defaultParams('distributor', s),
+        initialCash('distributor', s),
+      );
       state.buyers[s] = createBuyer(s, defaultParams('buyer', s), initialCash('buyer', s));
     }
     for (const slot of ALL_SLOTS) {
@@ -78,7 +88,8 @@ export class Engine {
 
   /** Reconstruye un motor desde un estado serializado (copia profunda). */
   static fromState(state, opts = {}) {
-    const st = typeof structuredClone === 'function' ? structuredClone(state) : JSON.parse(JSON.stringify(state));
+    const st =
+      typeof structuredClone === 'function' ? structuredClone(state) : JSON.parse(JSON.stringify(state));
     const eng = new Engine(st);
     if (opts.seed !== undefined) eng.rng.state = opts.seed >>> 0;
     return eng;
@@ -192,7 +203,14 @@ export class Engine {
       for (const x of SECTOR_IDS) b.demandHist[x].push(b.acc.bySector[x]);
       b.totalDemandHist.push(b.acc.demand);
       b.ordersHist.push(b.acc.ordered);
-      for (const arr of [p.ordersHist, p.inputOrdersHist, d.ordersHist, d.toProducerHist, b.totalDemandHist, b.ordersHist])
+      for (const arr of [
+        p.ordersHist,
+        p.inputOrdersHist,
+        d.ordersHist,
+        d.toProducerHist,
+        b.totalDemandHist,
+        b.ordersHist,
+      ])
         if (arr.length > 120) arr.shift();
       for (const x of SECTOR_IDS) if (b.demandHist[x].length > 120) b.demandHist[x].shift();
     }
@@ -302,9 +320,7 @@ export class Engine {
   /** Copia ligera del estado para Monte Carlo (sin historiales largos). */
   snapshotForMC() {
     const st = this.state;
-    const copy = JSON.parse(
-      JSON.stringify({ ...st, paramLog: [], controlLog: [], kpiDaily: [] }),
-    );
+    const copy = JSON.parse(JSON.stringify({ ...st, paramLog: [], controlLog: [], kpiDaily: [] }));
     copy.rngState = this.rng.state;
     return copy;
   }

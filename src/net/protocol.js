@@ -40,7 +40,14 @@ export const SCHEMAS = {
 };
 
 /** Mensajes que un cliente (jugador) puede enviar al anfitrión. */
-export const CLIENT_TO_HOST = new Set(['hello', 'claim_role', 'set_params', 'answer_proposal', 'chat', 'ping']);
+export const CLIENT_TO_HOST = new Set([
+  'hello',
+  'claim_role',
+  'set_params',
+  'answer_proposal',
+  'chat',
+  'ping',
+]);
 /** Mensajes que el anfitrión envía a los clientes. */
 export const HOST_TO_CLIENT = new Set([
   'room_state',

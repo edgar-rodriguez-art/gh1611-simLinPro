@@ -82,6 +82,8 @@ export async function loadMetrics(o) {
 export function toEngineMetrics(m) {
   return {
     hicp: { rate: m.hicp.rate },
-    sectors: Object.fromEntries(SECTOR_IDS.map((s) => [s, { index: m.sectors[s].index, sigma: m.sectors[s].sigma }])),
+    sectors: Object.fromEntries(
+      SECTOR_IDS.map((s) => [s, { index: m.sectors[s].index, sigma: m.sectors[s].sigma }]),
+    ),
   };
 }

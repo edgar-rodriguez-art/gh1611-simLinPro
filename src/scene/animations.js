@@ -14,7 +14,11 @@ export class MoverPool {
    * @param {number} cap
    */
   constructor(geo, color, cap, emissive = 0) {
-    this.mesh = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({ color, flatShading: true, emissive }), cap);
+    this.mesh = new THREE.InstancedMesh(
+      geo,
+      new THREE.MeshLambertMaterial({ color, flatShading: true, emissive }),
+      cap,
+    );
     this.mesh.castShadow = true;
     this.mesh.frustumCulled = false;
     this.cap = cap;
@@ -105,7 +109,10 @@ export class Rings {
     this.pool = [];
     const geo = new THREE.TorusGeometry(1, 0.06, 4, 24).rotateX(Math.PI / 2);
     for (let i = 0; i < cap; i++) {
-      const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: PALETTE.network, transparent: true, opacity: 0 }));
+      const m = new THREE.Mesh(
+        geo,
+        new THREE.MeshBasicMaterial({ color: PALETTE.network, transparent: true, opacity: 0 }),
+      );
       m.visible = false;
       this.group.add(m);
       this.pool.push(m);

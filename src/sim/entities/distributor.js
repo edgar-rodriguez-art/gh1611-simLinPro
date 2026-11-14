@@ -13,7 +13,8 @@ export function createDistributor(sector, params, cash) {
     cash,
     stock: Math.round(SECTORS[sector].lambda * 3),
     onOrder: 0,
-    queue: /** @type {{id:number, buyer:string, qty:number, remaining:number, placedAt:number, price:number}[]} */ ([]),
+    queue:
+      /** @type {{id:number, buyer:string, qty:number, remaining:number, placedAt:number, price:number}[]} */ ([]),
     trucks: /** @type {any[]} */ ([]),
     ordersHist: /** @type {number[]} */ ([]), // unidades pedidas por compradores por día
     toProducerHist: /** @type {number[]} */ ([]), // unidades pedidas al productor por día

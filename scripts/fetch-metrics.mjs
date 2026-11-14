@@ -46,7 +46,9 @@ async function main() {
   const live = await fetchEurostat(fetchFn, NACE_BY_SECTOR);
   for (const e of live.errors) console.warn('Aviso Eurostat:', e);
   if (live.hicp?.stale) {
-    console.warn('Aviso: prc_hicp_manr tiene más de 6 meses. Busca el dataset sucesor y documéntalo en CLAUDE.md §6.');
+    console.warn(
+      'Aviso: prc_hicp_manr tiene más de 6 meses. Busca el dataset sucesor y documéntalo en CLAUDE.md §6.',
+    );
   }
   let wb = null;
   try {

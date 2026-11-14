@@ -54,7 +54,9 @@ button {
   min-height: 44px;
   background: var(--card-2);
   font-weight: 600;
-  transition: transform 0.05s, background 0.15s;
+  transition:
+    transform 0.05s,
+    background 0.15s;
 }
 button:active {
   transform: translateY(1px);
@@ -294,6 +296,9 @@ label.field {
   font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
+}
+.chip:empty {
+  display: none;
 }
 .chip.ok {
   background: #e3f5ea;

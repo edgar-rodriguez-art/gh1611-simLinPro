@@ -1,6 +1,13 @@
 // @ts-check
 // Comprador: vende al consumidor final (demanda Poisson) y repone pidiendo a los distribuidores.
-import { SECTORS, SECTOR_IDS, BASKET_KEYS, RETAIL_MULT, HOLDING_RATE_DAY, refDistPrice } from '../../config.js';
+import {
+  SECTORS,
+  SECTOR_IDS,
+  BASKET_KEYS,
+  RETAIL_MULT,
+  HOLDING_RATE_DAY,
+  refDistPrice,
+} from '../../config.js';
 import { distPrice, distributorReceiveOrder } from './distributor.js';
 
 export const OPEN_HOURS = [8, 20]; // la tienda abre de 8 a 20 h
@@ -98,7 +105,8 @@ export function buyerTick(engine, b) {
       acc.sold += sold;
       acc.lost += dmd - sold;
       acc.bySector[s] += dmd;
-      if (dmd > sold && b.stock[s] < 1) engine.emit('stockout', { sector: s, buyer: b.sector, lost: dmd - sold });
+      if (dmd > sold && b.stock[s] < 1)
+        engine.emit('stockout', { sector: s, buyer: b.sector, lost: dmd - sold });
     }
   }
 

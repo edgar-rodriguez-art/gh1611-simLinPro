@@ -50,7 +50,11 @@ export const LOG_SCHEMA = {
     config: {
       type: 'object',
       required: ['velocidad', 'dias', 'nMC'],
-      properties: { velocidad: num, dias: { type: 'integer', minimum: 1 }, nMC: { type: 'integer', minimum: 1 } },
+      properties: {
+        velocidad: num,
+        dias: { type: 'integer', minimum: 1 },
+        nMC: { type: 'integer', minimum: 1 },
+      },
     },
     fuenteDatos: { type: 'object' },
     inicio: str(40),
@@ -172,17 +176,23 @@ export function validateSchema(schema, value, path = '$', errors = []) {
     errors.push(`${path}: se esperaba ${schema.type}, llegó ${typeOf(value)}`);
     return errors;
   }
-  if (schema.enum && !schema.enum.includes(value)) errors.push(`${path}: valor fuera de la lista (${JSON.stringify(value)})`);
+  if (schema.enum && !schema.enum.includes(value))
+    errors.push(`${path}: valor fuera de la lista (${JSON.stringify(value)})`);
   if (typeof value === 'number') {
-    if (schema.minimum !== undefined && value < schema.minimum) errors.push(`${path}: menor que ${schema.minimum}`);
-    if (schema.maximum !== undefined && value > schema.maximum) errors.push(`${path}: mayor que ${schema.maximum}`);
+    if (schema.minimum !== undefined && value < schema.minimum)
+      errors.push(`${path}: menor que ${schema.minimum}`);
+    if (schema.maximum !== undefined && value > schema.maximum)
+      errors.push(`${path}: mayor que ${schema.maximum}`);
   }
   if (typeof value === 'string') {
-    if (schema.maxLength !== undefined && value.length > schema.maxLength) errors.push(`${path}: texto demasiado largo`);
-    if (schema.minLength !== undefined && value.length < schema.minLength) errors.push(`${path}: texto demasiado corto`);
+    if (schema.maxLength !== undefined && value.length > schema.maxLength)
+      errors.push(`${path}: texto demasiado largo`);
+    if (schema.minLength !== undefined && value.length < schema.minLength)
+      errors.push(`${path}: texto demasiado corto`);
   }
   if (Array.isArray(value)) {
-    if (schema.maxItems !== undefined && value.length > schema.maxItems) errors.push(`${path}: demasiados elementos`);
+    if (schema.maxItems !== undefined && value.length > schema.maxItems)
+      errors.push(`${path}: demasiados elementos`);
     if (schema.items) value.forEach((v, i) => validateSchema(schema.items, v, `${path}[${i}]`, errors));
   }
   if (value && typeof value === 'object' && !Array.isArray(value)) {

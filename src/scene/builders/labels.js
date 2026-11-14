@@ -58,7 +58,9 @@ export function badge(info) {
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 2;
-  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
+  const sprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }),
+  );
   sprite.scale.set(5.2, 1.3, 1);
   sprite.renderOrder = 10;
   let last = JSON.stringify(info);

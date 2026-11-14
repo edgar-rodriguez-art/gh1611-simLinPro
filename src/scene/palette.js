@@ -30,7 +30,11 @@ export const PALETTE = {
   danger: 0xe0403a,
 };
 
-export const SECTOR_COLOR = { bakery: PALETTE.bakery, textile: PALETTE.textile, electronics: PALETTE.electronics };
+export const SECTOR_COLOR = {
+  bakery: PALETTE.bakery,
+  textile: PALETTE.textile,
+  electronics: PALETTE.electronics,
+};
 
 export const CSS = {
   bgTop: '#d9d2f3',

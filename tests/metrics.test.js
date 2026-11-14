@@ -23,7 +23,8 @@ function fixtureFetch({ failSca = false, offline = false } = {}) {
       f = 'eurostat-' + /nace_r2=(C\d+)/.exec(url)[1] + '.json';
     } else if (url.includes('FP.CPI')) f = 'worldbank-cpi.json';
     else if (url.includes('NV.IND')) f = 'worldbank-manuf.json';
-    else if (url.includes('metrics.json')) return { ok: true, json: async () => JSON.parse(readFileSync('data/metrics.json', 'utf8')) };
+    else if (url.includes('metrics.json'))
+      return { ok: true, json: async () => JSON.parse(readFileSync('data/metrics.json', 'utf8')) };
     return { ok: !!f, status: f ? 200 : 404, json: async () => fx(f) };
   };
 }
@@ -39,7 +40,10 @@ describe('Eurostat JSON-stat', () => {
     const j = {
       id: ['geo', 'time'],
       size: [1, 3],
-      dimension: { geo: { category: { index: { ES: 0 } } }, time: { category: { index: { '2026-01': 0, '2026-02': 1, '2026-03': 2 } } } },
+      dimension: {
+        geo: { category: { index: { ES: 0 } } },
+        time: { category: { index: { '2026-01': 0, '2026-02': 1, '2026-03': 2 } } },
+      },
       value: [100, 110, 99],
     };
     expect(parseJsonStatSeries(j).map((x) => x.value)).toEqual([100, 110, 99]);
@@ -89,7 +93,10 @@ describe('cascada de respaldo', () => {
     expect(m.sectors.electronics.via).toBe('por-defecto');
   });
   it('caché antes que Banco Mundial', () => {
-    const cache = { sectors: { bakery: { index: 104, sigma: 0.01, fuente: 'eurostat' } }, hicp: { rate: 2.1, fuente: 'eurostat' } };
+    const cache = {
+      sectors: { bakery: { index: 104, sigma: 0.01, fuente: 'eurostat' } },
+      hicp: { rate: 2.1, fuente: 'eurostat' },
+    };
     const m = resolveMetrics({ live: null, cache, wb: { hicp: { rate: 9, fuente: 'banco-mundial' } } });
     expect(m.hicp.rate).toBe(2.1);
     expect(m.sectors.bakery.via).toBe('cache');

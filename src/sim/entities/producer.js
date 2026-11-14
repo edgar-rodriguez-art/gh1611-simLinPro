@@ -1,6 +1,14 @@
 // @ts-check
 // Productor: compra insumos al proveedor BOT, fabrica por lotes y vende al distribuidor.
-import { SECTORS, SUPPLIERS, INSPECTION, SETUP_HOURS, HOLDING_RATE_DAY, RETURN_PENALTY, SHIFT_HOURS } from '../../config.js';
+import {
+  SECTORS,
+  SUPPLIERS,
+  INSPECTION,
+  SETUP_HOURS,
+  HOLDING_RATE_DAY,
+  RETURN_PENALTY,
+  SHIFT_HOURS,
+} from '../../config.js';
 import { inputUnitPrice, sampleLeadHours } from './supplier.js';
 
 export function createProducer(sector, params, cash) {
@@ -208,7 +216,9 @@ function finishLot(engine, p) {
   const lot = /** @type {{size:number}} */ (p.lot);
   const pDef = Math.min(
     0.5,
-    (sec.baseDefect + SUPPLIERS[par.supplier].defectAdd) * insp.defectMult * (1 - (par.maintenance / 100) * 2),
+    (sec.baseDefect + SUPPLIERS[par.supplier].defectAdd) *
+      insp.defectMult *
+      (1 - (par.maintenance / 100) * 2),
   );
   const defects = engine.rng.binomial(lot.size, pDef);
   const caught = engine.rng.binomial(defects, insp.catchRate);

@@ -61,7 +61,15 @@ export class HostServer {
   /** Registra una conexión nueva (PeerJS o bucle local). */
   addConnection(conn) {
     const id = 'c' + ++connSeq;
-    const client = { id, conn, playerId: null, alias: '', lastPing: this.now(), sent: new Map(), needFull: true };
+    const client = {
+      id,
+      conn,
+      playerId: null,
+      alias: '',
+      lastPing: this.now(),
+      sent: new Map(),
+      needFull: true,
+    };
     this.clients.set(id, client);
     conn.onMessage((raw) => this.handle(id, raw));
     conn.onClose(() => this.dropClient(id));
@@ -203,7 +211,10 @@ export class HostServer {
     const p = this.players.get(c.playerId);
     if (!p || !p.slot) return;
     if (this.engine.state.slots[p.slot].controller !== 'human') {
-      this.send(c.id, msg('chat', { text: 'Tu puesto está en manos de un BOT (quiebra o desconexión).', from: 'sistema' }));
+      this.send(
+        c.id,
+        msg('chat', { text: 'Tu puesto está en manos de un BOT (quiebra o desconexión).', from: 'sistema' }),
+      );
       return;
     }
     this.applyParams(p.slot, changes, 'jugador');
@@ -447,7 +458,13 @@ export class HostServer {
     }
     this.send(
       c.id,
-      msg('snapshot', { simT: this.simTime(), speed: this.speed, paused: this.paused || !this.started, full, data: out }),
+      msg('snapshot', {
+        simT: this.simTime(),
+        speed: this.speed,
+        paused: this.paused || !this.started,
+        full,
+        data: out,
+      }),
     );
   }
 

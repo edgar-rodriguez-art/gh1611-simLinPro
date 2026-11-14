@@ -26,7 +26,14 @@ describe('Monte Carlo', () => {
 
   it('es reproducible con la misma semilla base', () => {
     const s = snap();
-    const job = { snapshot: s, slot: 'buyer-textile', scenarios: [{ id: 'base', changes: null }], n: 20, baseSeed: 7, horizonDays: 3 };
+    const job = {
+      snapshot: s,
+      slot: 'buyer-textile',
+      scenarios: [{ id: 'base', changes: null }],
+      n: 20,
+      baseSeed: 7,
+      horizonDays: 3,
+    };
     expect(runScenarios(job)).toEqual(runScenarios(job));
     // repartir réplicas en rangos da lo mismo
     const a = runScenarios({ ...job, n: 10 });
@@ -36,7 +43,14 @@ describe('Monte Carlo', () => {
 
   it('percentiles estables (±2 %) entre ejecuciones con N=2000', () => {
     const s = snap();
-    const job = (baseSeed) => ({ snapshot: s, slot: 'buyer-textile', scenarios: [{ id: 'base', changes: null }], n: 2000, baseSeed, horizonDays: 14 });
+    const job = (baseSeed) => ({
+      snapshot: s,
+      slot: 'buyer-textile',
+      scenarios: [{ id: 'base', changes: null }],
+      n: 2000,
+      baseSeed,
+      horizonDays: 14,
+    });
     const r1 = runScenarios(job(1)).base.profit;
     const r2 = runScenarios(job(2)).base.profit;
     for (const p of [50, 95]) {
@@ -51,7 +65,10 @@ describe('Monte Carlo', () => {
     const r = runScenarios({
       snapshot: s,
       slot: 'producer-textile',
-      scenarios: [{ id: 'base', changes: null }, { id: 'same', changes: { shifts: 2 } }],
+      scenarios: [
+        { id: 'base', changes: null },
+        { id: 'same', changes: { shifts: 2 } },
+      ],
       n: 30,
       baseSeed: 3,
       horizonDays: 2,

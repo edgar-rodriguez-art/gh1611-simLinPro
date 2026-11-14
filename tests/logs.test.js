@@ -21,7 +21,13 @@ describe('bitácoras', () => {
     expect(validateLog({ schemaVersion: 1 }).length).toBeGreaterThan(5);
   });
   it('compacta si supera 2 MB', () => {
-    const big = { kpiDiarios: Array.from({ length: 4000 }, (_, i) => ({ dia: i, puestos: { x: { a: 1.23456789, pad: 'x'.repeat(600) } } })), eventos: [] };
+    const big = {
+      kpiDiarios: Array.from({ length: 4000 }, (_, i) => ({
+        dia: i,
+        puestos: { x: { a: 1.23456789, pad: 'x'.repeat(600) } },
+      })),
+      eventos: [],
+    };
     const out = compactIfNeeded(big);
     expect(out.compactado).toBe(true);
     expect(JSON.stringify(out).length).toBeLessThan(2.1 * 1024 * 1024);
@@ -45,9 +51,31 @@ describe('bitácoras', () => {
     };
     const logs = [
       { file: 'h.json', log: host.build() },
-      { file: 'a.json', log: mk('a', (l) => { l.red.latenciaP95 = 650; l.errores.push({ mensaje: 'TypeError: x is undefined', t: 'x' }); l.feedback = { valoracion: 2, texto: 'Muy lento' }; }) },
-      { file: 'b.json', log: mk('b', (l) => { l.rendimiento.fpsMedio = 20; l.rendimiento.dispositivo = 'movil'; l.errores.push({ mensaje: 'TypeError: x is undefined', t: 'y' }); l.feedback = { valoracion: 2, texto: 'muy lento!' }; }) },
-      { file: 'c.json', log: mk('c', (l) => { l.red.desconexiones = 5; l.kpiDiarios[2].kpi.cash *= 1.5; l.feedback = { valoracion: 3, texto: 'Muy lento' }; }) },
+      {
+        file: 'a.json',
+        log: mk('a', (l) => {
+          l.red.latenciaP95 = 650;
+          l.errores.push({ mensaje: 'TypeError: x is undefined', t: 'x' });
+          l.feedback = { valoracion: 2, texto: 'Muy lento' };
+        }),
+      },
+      {
+        file: 'b.json',
+        log: mk('b', (l) => {
+          l.rendimiento.fpsMedio = 20;
+          l.rendimiento.dispositivo = 'movil';
+          l.errores.push({ mensaje: 'TypeError: x is undefined', t: 'y' });
+          l.feedback = { valoracion: 2, texto: 'muy lento!' };
+        }),
+      },
+      {
+        file: 'c.json',
+        log: mk('c', (l) => {
+          l.red.desconexiones = 5;
+          l.kpiDiarios[2].kpi.cash *= 1.5;
+          l.feedback = { valoracion: 3, texto: 'Muy lento' };
+        }),
+      },
       { file: 'roto.json', parseError: 'JSON inválido' },
     ];
     const res = analyze(logs);

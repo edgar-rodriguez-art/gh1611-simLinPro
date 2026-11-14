@@ -86,8 +86,11 @@ export function isStale(period, today = new Date(), months = 6) {
 
 /** Lee la respuesta del Banco Mundial: [meta, [{date, value}]] → último valor no nulo. */
 export function parseWorldBank(json) {
-  if (!Array.isArray(json) || !Array.isArray(json[1])) throw new Error('respuesta del Banco Mundial no válida');
-  const rows = json[1].filter((r) => r && typeof r.value === 'number').sort((a, b) => (a.date < b.date ? 1 : -1));
+  if (!Array.isArray(json) || !Array.isArray(json[1]))
+    throw new Error('respuesta del Banco Mundial no válida');
+  const rows = json[1]
+    .filter((r) => r && typeof r.value === 'number')
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
   if (!rows.length) throw new Error('sin datos');
   return { value: rows[0].value, period: String(rows[0].date) };
 }
@@ -120,7 +123,13 @@ export async function fetchEurostat(fetchFn, naceBySector, today = new Date()) {
       try {
         const series = parseJsonStatSeries(await fetchJson(fetchFn, productionUrl(nace, sAdj)));
         if (series.length < 3) throw new Error('serie corta');
-        sectors[sector] = sectorFromSeries(series, { fuente: 'eurostat', dataset: 'sts_inpr_m', nace, s_adj: sAdj, fecha });
+        sectors[sector] = sectorFromSeries(series, {
+          fuente: 'eurostat',
+          dataset: 'sts_inpr_m',
+          nace,
+          s_adj: sAdj,
+          fecha,
+        });
         done = true;
         break;
       } catch (e) {
@@ -158,7 +167,15 @@ export async function fetchWorldBank(fetchFn, today = new Date()) {
     /* opcional */
   }
   return {
-    hicp: { rate: Math.round(cpi.value * 100) / 100, period: cpi.period, fuente: 'banco-mundial', indicador: 'FP.CPI.TOTL.ZG', fecha },
-    manufacturing: manuf ? { value: manuf.value, period: manuf.period, fuente: 'banco-mundial', indicador: 'NV.IND.MANF.ZS' } : null,
+    hicp: {
+      rate: Math.round(cpi.value * 100) / 100,
+      period: cpi.period,
+      fuente: 'banco-mundial',
+      indicador: 'FP.CPI.TOTL.ZG',
+      fecha,
+    },
+    manufacturing: manuf
+      ? { value: manuf.value, period: manuf.period, fuente: 'banco-mundial', indicador: 'NV.IND.MANF.ZS' }
+      : null,
   };
 }

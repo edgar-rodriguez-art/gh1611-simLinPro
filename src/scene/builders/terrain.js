@@ -28,7 +28,12 @@ export function board() {
   }
   const lg = new THREE.BufferGeometry();
   lg.setAttribute('position', new THREE.Float32BufferAttribute(lines, 3));
-  g.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: PALETTE.edgeA, transparent: true, opacity: 0.25 })));
+  g.add(
+    new THREE.LineSegments(
+      lg,
+      new THREE.LineBasicMaterial({ color: PALETTE.edgeA, transparent: true, opacity: 0.25 }),
+    ),
+  );
   return g;
 }
 
@@ -69,7 +74,9 @@ function arrow(p1, p2, color, dashed = false) {
   const segs = dashed ? Math.max(2, Math.floor(len / 0.9)) : 1;
   const segLen = dashed ? (len - 0.8) / segs - 0.3 : len - 0.8;
   for (let i = 0; i < segs; i++) {
-    const s = mesh(new THREE.BoxGeometry(Math.max(0.2, segLen), 0.04, dashed ? 0.12 : 0.18), color, { shadow: false });
+    const s = mesh(new THREE.BoxGeometry(Math.max(0.2, segLen), 0.04, dashed ? 0.12 : 0.18), color, {
+      shadow: false,
+    });
     const t = dashed ? (i * (segLen + 0.3) + segLen / 2) / len : (len - 0.8) / 2 / len;
     s.position.copy(p1).addScaledVector(dir, t);
     s.position.y = 0.11;
@@ -100,12 +107,47 @@ export function roads() {
     g.add(roadStrip(a, b, 1.25));
     g.add(dashes(a, b, 22));
     // flecha verde (material) bajo la carretera y dorada discontinua (dinero) en sentido inverso
-    g.add(arrow(uv(COL_U.supplier + 2.3, LANE_V[s] - 2.15), uv(COL_U.producer - 2.2, LANE_V[s] - 2.15), PALETTE.material));
-    g.add(arrow(uv(COL_U.producer + 2.4, LANE_V[s] - 2.15), uv(DEPOT.u - 3.6, LANE_V[s] - 2.15), PALETTE.material));
-    g.add(arrow(uv(DEPOT.u + 4.2, LANE_V[s] - 2.15), uv(COL_U.buyer - 2.4, LANE_V[s] - 2.15), PALETTE.material));
-    g.add(arrow(uv(COL_U.buyer - 2.4, LANE_V[s] - 0.05), uv(DEPOT.u + 4.6, LANE_V[s] - 0.05), PALETTE.money, true));
-    g.add(arrow(uv(DEPOT.u - 3.6, LANE_V[s] - 0.05), uv(COL_U.producer + 2.4, LANE_V[s] - 0.05), PALETTE.money, true));
-    g.add(arrow(uv(COL_U.producer - 2.4, LANE_V[s] + 2.4), uv(COL_U.supplier + 2.4, LANE_V[s] + 2.4), PALETTE.money, true));
+    g.add(
+      arrow(
+        uv(COL_U.supplier + 2.3, LANE_V[s] - 2.15),
+        uv(COL_U.producer - 2.2, LANE_V[s] - 2.15),
+        PALETTE.material,
+      ),
+    );
+    g.add(
+      arrow(
+        uv(COL_U.producer + 2.4, LANE_V[s] - 2.15),
+        uv(DEPOT.u - 3.6, LANE_V[s] - 2.15),
+        PALETTE.material,
+      ),
+    );
+    g.add(
+      arrow(uv(DEPOT.u + 4.2, LANE_V[s] - 2.15), uv(COL_U.buyer - 2.4, LANE_V[s] - 2.15), PALETTE.material),
+    );
+    g.add(
+      arrow(
+        uv(COL_U.buyer - 2.4, LANE_V[s] - 0.05),
+        uv(DEPOT.u + 4.6, LANE_V[s] - 0.05),
+        PALETTE.money,
+        true,
+      ),
+    );
+    g.add(
+      arrow(
+        uv(DEPOT.u - 3.6, LANE_V[s] - 0.05),
+        uv(COL_U.producer + 2.4, LANE_V[s] - 0.05),
+        PALETTE.money,
+        true,
+      ),
+    );
+    g.add(
+      arrow(
+        uv(COL_U.producer - 2.4, LANE_V[s] + 2.4),
+        uv(COL_U.supplier + 2.4, LANE_V[s] + 2.4),
+        PALETTE.money,
+        true,
+      ),
+    );
   }
   // carretera transversal del centro logístico
   const top = uv(DEPOT.u + 7, LANE_V.bakery - 1.1);
@@ -128,13 +170,33 @@ function rand(seed) {
 /** Árboles cono azules (InstancedMesh). */
 export function trees() {
   const spots = [
-    [-12.5, 12.5], [-4, 12.5], [6, 11.5], [11, 4.5], [-13, -3.5], [-3, 3.8], [-3, -4], [9.5, -11.5],
-    [-12.5, -11.5], [-5, -12], [12, 12], [-19.5, 1], [21, 4], [21, -4], [-8, 16], [8, 15.5], [-16, 5], [14, -15],
+    [-12.5, 12.5],
+    [-4, 12.5],
+    [6, 11.5],
+    [11, 4.5],
+    [-13, -3.5],
+    [-3, 3.8],
+    [-3, -4],
+    [9.5, -11.5],
+    [-12.5, -11.5],
+    [-5, -12],
+    [12, 12],
+    [-19.5, 1],
+    [21, 4],
+    [21, -4],
+    [-8, 16],
+    [8, 15.5],
+    [-16, 5],
+    [14, -15],
   ];
   const r = rand(17);
   const geo = new THREE.ConeGeometry(0.75, 2.2, 5);
   geo.translate(0, 1.1, 0);
-  const inst = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({ color: PALETTE.tree, flatShading: true }), spots.length);
+  const inst = new THREE.InstancedMesh(
+    geo,
+    new THREE.MeshLambertMaterial({ color: PALETTE.tree, flatShading: true }),
+    spots.length,
+  );
   inst.castShadow = true;
   const o = new THREE.Object3D();
   spots.forEach(([u, v], i) => {
@@ -179,7 +241,14 @@ export function mountains() {
 export function lake() {
   const shape = new THREE.Shape();
   const pts = [
-    [-6, -0.5], [-3.5, 3], [1.5, 3.6], [6, 2], [7, -1], [4, -3.4], [-1.5, -3.6], [-5, -2.8],
+    [-6, -0.5],
+    [-3.5, 3],
+    [1.5, 3.6],
+    [6, 2],
+    [7, -1],
+    [4, -3.4],
+    [-1.5, -3.6],
+    [-5, -2.8],
   ];
   shape.moveTo(pts[0][0], pts[0][1]);
   for (const [x, y] of pts.slice(1)) shape.lineTo(x, y);
@@ -194,7 +263,13 @@ export function lake() {
 export function networkArcs(targets) {
   const g = new THREE.Group();
   const from = uv(HOST_POS.u, HOST_POS.v, 10.9);
-  const matl = new THREE.LineDashedMaterial({ color: PALETTE.network, dashSize: 0.5, gapSize: 0.35, transparent: true, opacity: 0.55 });
+  const matl = new THREE.LineDashedMaterial({
+    color: PALETTE.network,
+    dashSize: 0.5,
+    gapSize: 0.35,
+    transparent: true,
+    opacity: 0.55,
+  });
   for (const to of targets) {
     const mid = from.clone().add(to).multiplyScalar(0.5);
     mid.y = Math.max(from.y, to.y) + 3;

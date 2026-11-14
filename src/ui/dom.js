@@ -73,7 +73,9 @@ export function sparkline(canvas, values, color = '#5b3fb8') {
 }
 
 export function isMobile() {
-  return window.matchMedia('(max-width: 820px)').matches || /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+  return (
+    window.matchMedia('(max-width: 820px)').matches || /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)
+  );
 }
 
 export function prefersReducedMotion() {

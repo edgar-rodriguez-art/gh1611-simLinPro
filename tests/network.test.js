@@ -85,17 +85,35 @@ describe('red anfitrión ↔ jugador (bucle local)', () => {
     c.claim('producer-bakery');
     await flush();
     c.on('proposal', (p) => c.answerProposal(p.id, true));
-    host.sendProposal({ slot: 'producer-bakery', changes: { lotSize: 120 }, delta: { profit: 10 }, pImprove: 0.7, riskP5: 0 });
+    host.sendProposal({
+      slot: 'producer-bakery',
+      changes: { lotSize: 120 },
+      delta: { profit: 10 },
+      pImprove: 0.7,
+      riskP5: 0,
+    });
     await flush();
     await flush();
     expect(engine.state.producers.bakery.params.lotSize).toBe(120);
     expect(engine.state.paramLog.at(-1).origin).toBe('propuesta');
 
-    host.sendProposal({ slot: 'buyer-textile', changes: { safetyDays: 3 }, delta: {}, pImprove: 0.4, riskP5: 0 });
+    host.sendProposal({
+      slot: 'buyer-textile',
+      changes: { safetyDays: 3 },
+      delta: {},
+      pImprove: 0.4,
+      riskP5: 0,
+    });
     clock.advance(2000);
     host.update();
     expect(host.proposalLog.at(-1)).toMatchObject({ decision: 'rechazada', decidedBy: 'bot' });
-    host.sendProposal({ slot: 'buyer-textile', changes: { safetyDays: 3 }, delta: {}, pImprove: 0.8, riskP5: 0.01 });
+    host.sendProposal({
+      slot: 'buyer-textile',
+      changes: { safetyDays: 3 },
+      delta: {},
+      pImprove: 0.8,
+      riskP5: 0.01,
+    });
     clock.advance(2000);
     host.update();
     expect(engine.state.buyers.textile.params.safetyDays).toBe(3);
@@ -107,7 +125,13 @@ describe('red anfitrión ↔ jugador (bucle local)', () => {
     await flush();
     c.claim('producer-bakery');
     await flush();
-    host.sendProposal({ slot: 'producer-bakery', changes: { shifts: 3 }, delta: {}, pImprove: 0.9, riskP5: 0 });
+    host.sendProposal({
+      slot: 'producer-bakery',
+      changes: { shifts: 3 },
+      delta: {},
+      pImprove: 0.9,
+      riskP5: 0,
+    });
     clock.advance(91000);
     c.ping(); // mantiene viva la conexión
     await flush();

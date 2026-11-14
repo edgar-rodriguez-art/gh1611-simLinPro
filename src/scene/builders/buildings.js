@@ -101,7 +101,10 @@ export function containers() {
     c.position.set(x, c.position.y + y, z);
     g.add(c);
     for (let k = -2; k <= 2; k++) {
-      const rib = box(0.05, 0.95, 1.18, 0x000000, { shadow: false, opts: { transparent: true, opacity: 0.12 } });
+      const rib = box(0.05, 0.95, 1.18, 0x000000, {
+        shadow: false,
+        opts: { transparent: true, opacity: 0.12 },
+      });
       rib.position.set(x + k * 0.45, rib.position.y + y + 0.05, z);
       g.add(rib);
     }
@@ -242,7 +245,10 @@ export function shop(color) {
     stripe.rotation.x = 0.35;
     g.add(stripe);
   }
-  const win = box(1.8, 0.7, 0.08, PALETTE.electronics, { shadow: false, opts: { transparent: true, opacity: 0.7 } });
+  const win = box(1.8, 0.7, 0.08, PALETTE.electronics, {
+    shadow: false,
+    opts: { transparent: true, opacity: 0.7 },
+  });
   win.position.set(-0.3, 0.55, 1.32);
   g.add(win);
   return g;
@@ -267,7 +273,9 @@ export function hostTower() {
   const mast = cyl(0.07, 0.1, 1.8, 5, PALETTE.dark);
   mast.position.y = 9.0 + 0.9;
   g.add(mast);
-  const tip = mesh(new THREE.IcosahedronGeometry(0.2, 0), PALETTE.network, { opts: { emissive: PALETTE.network } });
+  const tip = mesh(new THREE.IcosahedronGeometry(0.2, 0), PALETTE.network, {
+    opts: { emissive: PALETTE.network },
+  });
   tip.position.y = 10.85;
   g.add(tip);
   for (let i = 0; i < 4; i++) {

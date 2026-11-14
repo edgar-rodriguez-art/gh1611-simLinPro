@@ -28,7 +28,8 @@ export function stationPos(kind, sector) {
 /** Posición del puesto (para centrar la cámara y la insignia). */
 export function slotPos(slot) {
   const [role, sector] = slot.split('-');
-  if (role === 'distributor') return uv(DEPOT.u + (sector === 'bakery' ? -2.4 : sector === 'textile' ? 0 : 2.4), DEPOT.v);
+  if (role === 'distributor')
+    return uv(DEPOT.u + (sector === 'bakery' ? -2.4 : sector === 'textile' ? 0 : 2.4), DEPOT.v);
   return stationPos(role, sector);
 }
 
@@ -51,7 +52,12 @@ export function shipCurve(sector) {
   const v = LANE_V[sector] - 1.1;
   const dockU = DEPOT.u + (sector === 'bakery' ? -2.4 : sector === 'textile' ? 0 : 2.4);
   return new THREE.CatmullRomCurve3(
-    [uv(COL_U.producer + 2.2, v), uv(DEPOT.u - 5, v), uv(DEPOT.u - 4, (v + DEPOT.v + 2.4) / 2), uv(dockU, DEPOT.v + 2.4)],
+    [
+      uv(COL_U.producer + 2.2, v),
+      uv(DEPOT.u - 5, v),
+      uv(DEPOT.u - 4, (v + DEPOT.v + 2.4) / 2),
+      uv(dockU, DEPOT.v + 2.4),
+    ],
     false,
     'catmullrom',
     0.3,

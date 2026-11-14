@@ -21,7 +21,10 @@ export function buyerHud(slot, onChange) {
     ],
     status: (d) => {
       const B = d['B.' + sector];
-      return 'Stock: ' + SECTOR_IDS.map((s) => `${SECTORS[s].product} ${B.stock[s]} (+${B.onOrder[s]})`).join(' · ');
+      return (
+        'Stock: ' +
+        SECTOR_IDS.map((s) => `${SECTORS[s].product} ${B.stock[s]} (+${B.onOrder[s]})`).join(' · ')
+      );
     },
   });
 }

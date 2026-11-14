@@ -6,7 +6,15 @@ import { percentile } from '../sim/kpi.js';
 
 const MAX_EVENTS = 3000;
 const MAX_ERRORS = 200;
-const LOGGED_EVENTS = new Set(['breakdown', 'repair', 'stockout', 'bankrupt', 'controller', 'price_rejected', 'game_over']);
+const LOGGED_EVENTS = new Set([
+  'breakdown',
+  'repair',
+  'stockout',
+  'bankrupt',
+  'controller',
+  'price_rejected',
+  'game_over',
+]);
 
 export function appVersion() {
   return typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev';
@@ -44,7 +52,13 @@ export class GameLogger {
     this.eventos = /** @type {any[]} */ ([]);
     this.errores = /** @type {any[]} */ ([]);
     this.feedback = { valoracion: /** @type {number|null} */ (null), texto: '' };
-    this.red = { latenciaP50: null, latenciaP95: null, desconexiones: 0, mensajesRechazados: 0, mensajesRecibidos: 0 };
+    this.red = {
+      latenciaP50: null,
+      latenciaP95: null,
+      desconexiones: 0,
+      mensajesRechazados: 0,
+      mensajesRecibidos: 0,
+    };
     this.fps = /** @type {number[]} */ ([]);
     this.mcMs = /** @type {number[]} */ ([]);
     /** @type {any} */
@@ -62,7 +76,14 @@ export class GameLogger {
 
   /** Cambio de parámetro (entrada del paramLog del motor). */
   param(e) {
-    this.parametros.push({ t: e.t, puesto: e.slot, parametro: e.param, anterior: e.old ?? null, nuevo: e.new ?? null, origen: e.origin });
+    this.parametros.push({
+      t: e.t,
+      puesto: e.slot,
+      parametro: e.param,
+      anterior: e.old ?? null,
+      nuevo: e.new ?? null,
+      origen: e.origin,
+    });
   }
 
   proposal(p) {
@@ -92,13 +113,28 @@ export class GameLogger {
           agg.perdidas += ev.lost || 0;
           continue;
         }
-        const e = { t: ev.t, tipo: 'rotura_stock', dia: Math.floor(ev.t / 24), sector: ev.sector, comprador: ev.buyer, perdidas: ev.lost || 0 };
+        const e = {
+          t: ev.t,
+          tipo: 'rotura_stock',
+          dia: Math.floor(ev.t / 24),
+          sector: ev.sector,
+          comprador: ev.buyer,
+          perdidas: ev.lost || 0,
+        };
         this.stockoutAgg.set(key, e);
         this.pushEvent(e);
         continue;
       }
       const { type, t, ...rest } = ev;
-      const tipo = { breakdown: 'averia', repair: 'reparacion', bankrupt: 'quiebra', controller: 'control', price_rejected: 'precio_rechazado', game_over: 'fin' }[type] || type;
+      const tipo =
+        {
+          breakdown: 'averia',
+          repair: 'reparacion',
+          bankrupt: 'quiebra',
+          controller: 'control',
+          price_rejected: 'precio_rechazado',
+          game_over: 'fin',
+        }[type] || type;
       this.pushEvent({ t, tipo, dia: Math.floor(t / 24), ...rest });
     }
   }
@@ -118,7 +154,11 @@ export class GameLogger {
     if (this.errores.length >= MAX_ERRORS) return;
     this.errores.push({
       mensaje: String(message || 'error').slice(0, 500),
-      stack: String(stack || '').split('\n').slice(0, 8).join('\n').slice(0, 2000),
+      stack: String(stack || '')
+        .split('\n')
+        .slice(0, 8)
+        .join('\n')
+        .slice(0, 2000),
       t: new Date().toISOString(),
       fatal,
     });
@@ -151,7 +191,10 @@ export class GameLogger {
   }
 
   setFeedback(valoracion, texto) {
-    this.feedback = { valoracion: valoracion ? Math.min(5, Math.max(1, Math.round(valoracion))) : null, texto: String(texto || '').slice(0, 2000) };
+    this.feedback = {
+      valoracion: valoracion ? Math.min(5, Math.max(1, Math.round(valoracion))) : null,
+      texto: String(texto || '').slice(0, 2000),
+    };
   }
 
   setRegistro(r) {
@@ -164,7 +207,9 @@ export class GameLogger {
 
   build() {
     const o = this.o;
-    const fpsMedio = this.fps.length ? Math.round(this.fps.reduce((a, b) => a + b, 0) / this.fps.length) : null;
+    const fpsMedio = this.fps.length
+      ? Math.round(this.fps.reduce((a, b) => a + b, 0) / this.fps.length)
+      : null;
     /** @type {Record<string, any>} */
     const log = {
       schemaVersion: LOG_SCHEMA_VERSION,
@@ -225,13 +270,19 @@ export class GameLogger {
 export function compactIfNeeded(log) {
   let s = JSON.stringify(log);
   if (s.length <= MAX_LOG_BYTES) return log;
-  const round = (v) => (typeof v === 'number' ? Math.round(v * 100) / 100 : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, round(x)])) : v);
+  const round = (v) =>
+    typeof v === 'number'
+      ? Math.round(v * 100) / 100
+      : v && typeof v === 'object'
+        ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, round(x)]))
+        : v;
   log.kpiDiarios = log.kpiDiarios.map(round);
   log.compactado = true;
   s = JSON.stringify(log);
   let guard = 0;
   while (s.length > MAX_LOG_BYTES && guard++ < 6) {
-    if (log.kpiDiarios.length > 10) log.kpiDiarios = log.kpiDiarios.filter((_, i) => i % 2 === 0 || i === log.kpiDiarios.length - 1);
+    if (log.kpiDiarios.length > 10)
+      log.kpiDiarios = log.kpiDiarios.filter((_, i) => i % 2 === 0 || i === log.kpiDiarios.length - 1);
     if (log.eventos.length > 200) log.eventos = log.eventos.slice(0, Math.floor(log.eventos.length / 2));
     s = JSON.stringify(log);
   }

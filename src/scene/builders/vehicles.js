@@ -24,8 +24,16 @@ export function truck(color, scale = 1) {
     cargo.add(c);
   }
   body.add(cargo);
-  for (const [x, z] of [[0.55, 0.32], [-0.5, 0.32], [0.55, -0.32], [-0.5, -0.32]]) {
-    const w = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.1, 6).rotateX(Math.PI / 2), new THREE.MeshLambertMaterial({ color: PALETTE.dark, flatShading: true }));
+  for (const [x, z] of [
+    [0.55, 0.32],
+    [-0.5, 0.32],
+    [0.55, -0.32],
+    [-0.5, -0.32],
+  ]) {
+    const w = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.13, 0.13, 0.1, 6).rotateX(Math.PI / 2),
+      new THREE.MeshLambertMaterial({ color: PALETTE.dark, flatShading: true }),
+    );
     w.position.set(x, 0.13, z);
     body.add(w);
   }

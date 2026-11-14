@@ -40,29 +40,44 @@ export function showProposal({ proposal: p, onAnswer }) {
     ]),
   );
   const d = p.delta || {};
-  const kv = (label, value, cls = '') => h('div', { class: 'kpi' }, [h('div', { class: 'label', text: label }), h('div', { class: 'value ' + cls, text: value })]);
+  const kv = (label, value, cls = '') =>
+    h('div', { class: 'kpi' }, [
+      h('div', { class: 'label', text: label }),
+      h('div', { class: 'value ' + cls, text: value }),
+    ]);
   const sign = (x) => (x > 0 ? 'pos' : x < 0 ? 'neg' : '');
   const fmtK = (def, x) => (def.fmt === 'pct' ? fmt.signed(x * 100, fmt.num) + ' pp' : fmt.signed(x));
-  const back = h('div', { class: 'modal-back', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'prop-title' }, [
-    h('div', { class: 'modal' }, [
-      h('h2', { id: 'prop-title', text: 'Propuesta de mejora del anfitrión' }),
-      h('p', { class: 'muted tiny', text: `Monte Carlo a 14 días${p.kpiLabel ? ' · ' + p.kpiLabel : ''}. Tú decides.` }),
-      ...changes,
-      h('div', { class: 'kpis' }, [
-        kv('Δ beneficio esperado (14 d)', fmt.signed(d.profit, fmt.eur), sign(d.profit)),
-        kv('Probabilidad de mejora', fmt.pct(p.pImprove)),
-        kv(`Δ ${kdefs[0].label}`, fmtK(kdefs[0], d.k1), sign(d.k1)),
-        kv(`Δ ${kdefs[1].label}`, fmtK(kdefs[1], d.k2), sign(kdefs[1].lowerIsBetter ? -d.k2 : d.k2)),
-        kv('Riesgo (empeora P5)', p.riskP5 > 0 ? fmt.pct(p.riskP5) : 'no empeora', p.riskP5 > 0.05 ? 'neg' : ''),
+  const back = h(
+    'div',
+    { class: 'modal-back', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'prop-title' },
+    [
+      h('div', { class: 'modal' }, [
+        h('h2', { id: 'prop-title', text: 'Propuesta de mejora del anfitrión' }),
+        h('p', {
+          class: 'muted tiny',
+          text: `Monte Carlo a 14 días${p.kpiLabel ? ' · ' + p.kpiLabel : ''}. Tú decides.`,
+        }),
+        ...changes,
+        h('div', { class: 'kpis' }, [
+          kv('Δ beneficio esperado (14 d)', fmt.signed(d.profit, fmt.eur), sign(d.profit)),
+          kv('Probabilidad de mejora', fmt.pct(p.pImprove)),
+          kv(`Δ ${kdefs[0].label}`, fmtK(kdefs[0], d.k1), sign(d.k1)),
+          kv(`Δ ${kdefs[1].label}`, fmtK(kdefs[1], d.k2), sign(kdefs[1].lowerIsBetter ? -d.k2 : d.k2)),
+          kv(
+            'Riesgo (empeora P5)',
+            p.riskP5 > 0 ? fmt.pct(p.riskP5) : 'no empeora',
+            p.riskP5 > 0.05 ? 'neg' : '',
+          ),
+        ]),
+        h('div', { class: 'timer' }, [bar]),
+        secs,
+        h('div', { class: 'row' }, [
+          h('button', { class: 'ok grow', text: 'Aceptar', onclick: () => answer(true) }),
+          h('button', { class: 'bad grow', text: 'Rechazar', onclick: () => answer(false) }),
+        ]),
       ]),
-      h('div', { class: 'timer' }, [bar]),
-      secs,
-      h('div', { class: 'row' }, [
-        h('button', { class: 'ok grow', text: 'Aceptar', onclick: () => answer(true) }),
-        h('button', { class: 'bad grow', text: 'Rechazar', onclick: () => answer(false) }),
-      ]),
-    ]),
-  ]);
+    ],
+  );
   document.body.append(back);
   /** @type {HTMLButtonElement|null} */ (back.querySelector('button.ok'))?.focus();
   const iv = setInterval(() => {
