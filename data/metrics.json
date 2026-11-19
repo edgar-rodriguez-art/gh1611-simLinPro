@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generado": "2026-11-18T13:57:02.839Z",
+  "generado": "2026-11-19T14:26:06.318Z",
   "fuente": "eurostat",
   "sectors": {
     "bakery": {
@@ -12,7 +12,7 @@
       "dataset": "sts_inpr_m",
       "nace": "C10",
       "s_adj": "SCA",
-      "fecha": "2026-11-18"
+      "fecha": "2026-11-19"
     },
     "textile": {
       "index": 93.4,
@@ -23,7 +23,7 @@
       "dataset": "sts_inpr_m",
       "nace": "C13",
       "s_adj": "SCA",
-      "fecha": "2026-11-18"
+      "fecha": "2026-11-19"
     },
     "electronics": {
       "index": 141.6,
@@ -34,7 +34,7 @@
       "dataset": "sts_inpr_m",
       "nace": "C26",
       "s_adj": "SCA",
-      "fecha": "2026-11-18"
+      "fecha": "2026-11-19"
     }
   },
   "hicp": {
@@ -42,7 +42,7 @@
     "period": "2025-12",
     "fuente": "eurostat",
     "dataset": "prc_hicp_manr",
-    "fecha": "2026-11-18",
+    "fecha": "2026-11-19",
     "stale": true
   },
   "manufacturing": null
