@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generado": "2026-11-19T14:26:06.318Z",
+  "generado": "2026-11-20T13:59:58.532Z",
   "fuente": "eurostat",
   "sectors": {
     "bakery": {
@@ -12,7 +12,7 @@
       "dataset": "sts_inpr_m",
       "nace": "C10",
       "s_adj": "SCA",
-      "fecha": "2026-11-19"
+      "fecha": "2026-11-20"
     },
     "textile": {
       "index": 93.4,
@@ -23,7 +23,7 @@
       "dataset": "sts_inpr_m",
       "nace": "C13",
       "s_adj": "SCA",
-      "fecha": "2026-11-19"
+      "fecha": "2026-11-20"
     },
     "electronics": {
       "index": 141.6,
@@ -34,7 +34,7 @@
       "dataset": "sts_inpr_m",
       "nace": "C26",
       "s_adj": "SCA",
-      "fecha": "2026-11-19"
+      "fecha": "2026-11-20"
     }
   },
   "hicp": {
@@ -42,8 +42,13 @@
     "period": "2025-12",
     "fuente": "eurostat",
     "dataset": "prc_hicp_manr",
-    "fecha": "2026-11-19",
+    "fecha": "2026-11-20",
     "stale": true
   },
-  "manufacturing": null
+  "manufacturing": {
+    "value": 10.5965556156173,
+    "period": "2025",
+    "fuente": "banco-mundial",
+    "indicador": "NV.IND.MANF.ZS"
+  }
 }
